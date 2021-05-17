@@ -1,0 +1,77 @@
+{% extends 'assembly/base_category.html' %}
+{% load static %}
+{% block title_category %} Видеокарты {% endblock %}
+{% block filter %}
+    <div class="text-center">Объем видео памяти</div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            1ГБ
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            2ГБ
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            3ГБ
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            4ГБ
+        </label>
+    </div>
+    <br>
+    <br>
+    <div class="text-center">Производитель</div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            Palit
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            3D-INNO
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            MSI
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
+        <label class="form-check-label" for="flexCheckDefault">
+            Gigabyte
+        </label>
+    </div>
+{% endblock %}
+{% block items%}
+    {% for item in video %}
+        <div class="col-md-4 col-lg-3 col-sm-4 col-xs-12">
+            <div class="card bg-light block object-fit ">
+                <div class="image-container" >
+                    {% if item.video_img  %}
+                      <a href={{item.get_absolute_url}}><img class="image-fit"   src="{{item.video_img.url}}"></a>
+                    {% else %}
+                      <a href={{item.get_absolute_url}}><img class="image-fit"  src="{% static 'img/plug/plug.jpg' %}"></a>
+                    {% endif %}
+                </div>
+                <div class="card-body text-center">
+                    <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{item.name}}</p>
+                    <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{item.price_rub}} rub</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+

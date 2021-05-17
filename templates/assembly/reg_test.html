@@ -1,0 +1,31 @@
+{% load static %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/css.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login-register.css' %}">
+</head>
+<div class="modal-custom">
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% else %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+<form method="POST"  data-remote="true" action="" accept-charset="UTF-8" id="reg_form" >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-default btn-register" type="submit" value="Создать аккаунт" name="commit" >
+</form>
+{% include 'assembly/inc/_footer.html' %}
+</div>

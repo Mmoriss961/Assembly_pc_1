@@ -1,0 +1,66 @@
+{% extends 'assembly/base_characteristic_item.html' %}
+{% load static %}
+{%block main_title %}{{char_proc.id_manuf}} {{ char_proc.name}} {{ char_proc.proc_frequency }} Gb{% endblock %}
+{% block img %}
+        {% if char_proc.proc_img %}
+            <img src="{{char_proc.proc_img.url}}"   class="image-fit-sec" >
+        {% else %}
+            <img src="{% static 'img/plug/plug.jpg' %}">
+        {% endif %}
+{% endblock %}
+{% block items %}
+
+    <div class=table-responsive">
+        <table class="table" >
+            <thead>
+            <tr>
+                <th >Общие характеристики</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">Наименование</th>
+                <td>{{ char_proc.name}}</td>
+            </tr>
+            <tr>
+            <tr>
+                <th scope="row">Производитель</th>
+                <td>{{ char_proc.id_manuf}}</td>
+            </tr>
+            <th scope="row">Частота видеопроцессора</th>
+            <td>{{ char_proc.video_frequency }} МГц</td>
+            </tr>
+            <tr>
+                <th scope="row">Сокет</th>
+                <td> {{ char_proc.id_socket }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Частота памяти</th>
+                <td>{{ char_video.memory_frequency }} МГц</td>
+            </tr>
+            <tr>
+                <th scope="row">Объем видеопамяти</th>
+                <td>{{ char_video.video_memory }} ГБ</td>
+            </tr>
+            <tr>
+                <th scope="row">Рекомендуемая мощность блока питания</th>
+                <td>{{ char_video.power_supply_unit }} Вт</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% comment %}
+    {% for item in char_video %}
+        <div>{{ item }}</div>
+                {% if item == char_video.video_img  %}
+            {% if item  %}
+                <div> <img src="{{ item.url }}"></div>
+            {% else %}
+                <div><img src="{% static "img/plug/plug.jpg" %}"></div>
+            {% endif %}
+        {% endif %}
+
+    {% endfor %}
+    {% endcomment %}
+{% endblock %}

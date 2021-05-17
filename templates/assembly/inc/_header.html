@@ -1,0 +1,53 @@
+{% load static %}
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-black fixed-top">
+        <a href="{% url 'home' %}" class="navbar-brand" ><img src="{% static 'img/logo_3.png' %}" width="50px"></a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between " id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="{% url 'home' %}#item"   class="nav-item nav-link  ">Комплектующие</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Сервисы</a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Конфигуратор</a>
+                        <a href="#" class="dropdown-item">Подборка ПК</a>
+                    </div>
+                </div>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Готовые сборки</a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Сборки пользователей</a>
+                        <a href="#" class="dropdown-item">Сборки сервиса</a>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar-nav">
+
+                {% if request.user.is_authenticated %}
+                    <div class="nav-item nav-link ">Здравствуйте, {{ user.username }}</div>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                    <a href="{% url 'admin:index' %}" class="nav-item nav-link">Панель администратора</a>
+                {% endif %}
+                {% if request.user.is_authenticated  %}
+                    <a href="{% url 'logout' %}" class="nav-item nav-link">Выход</a>
+
+                {%else  %}
+                    <a href="" class="nav-item nav-link " data-toggle="modal"  onclick="openLoginModal();">Войти</a>
+                    <a href="" class="nav-item nav-link"  data-toggle="modal"  onclick="openRegisterModal();">Зарегистрироваться</a>
+
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% include 'assembly/modal.html' %}
+</header>
+
+
+
+
+
+
+

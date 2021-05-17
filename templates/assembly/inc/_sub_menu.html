@@ -1,0 +1,86 @@
+{% load static %}
+
+<div class="mr-2 ml-2 " id="item" >
+    <div class="row" style="width: 100%;height: 100%;" >
+        <div class="col-md-4 col-sm-4 col-xs-12" >
+            <a href="{% url "video"  %}">
+                <div class="card bg-light">
+                    <img  src="{% static 'img/sub_menu/video.jpg' %}">
+                    <div class="card-body text-center">
+                        <p class="card-text" href="{% url "video"  %}">Видеокарта</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <a href="{% url "proc"  %}">
+                <div class="card bg-light">
+                    <img  src="{% static 'img/sub_menu/proc.jpg' %}">
+                    <div class="card-body text-center">
+                        <p class="card-text" href="{% url "proc"  %}">Процессор</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <a href="#">
+                <div class="card bg-light">
+                    <img  src="{% static 'img/sub_menu/mboard.jpg' %}">
+                    <div class="card-body text-center">
+                        <p class="card-text">Материнская плата</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 ">
+            <a href="#">
+                <div class="card bg-light">
+                    <img src="{% static 'img/sub_menu/cooler.jpg' %}">
+                    <div class="card-body text-center">
+                        <p class="card-text">Охлаждение</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <a href="#">
+                <div class="card bg-light">
+                    <img src="{% static 'img/sub_menu/DDR.jpg' %}">
+                    <div class="card-body text-center  text-truncate d-inline-block" >
+                        <p class="card-text">Оперативная память</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <a href="#">
+                <div class="card bg-light">
+                    <img src="{% static 'img/sub_menu/case.jpg' %}">
+                    <div class="card-body text-center">
+                        <p class="card-text">Корпус</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-5 col-xs-12 offset-md-2 offset-sm-1">
+            <a href="#"><div class="card bg-light">
+                <img  src="{% static 'img/sub_menu/power.jpg' %}">
+                <div class="card-body text-center">
+                    <p class="card-text">Блок питания</p>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-5 col-xs-12">
+            <a href="#"><div class="card bg-light">
+                <img  src="{% static 'img/sub_menu/hdd.jpg' %}">
+                <div class="card-body text-center">
+                    <p class="card-text">Накопитель</p>
+                </div>
+            </div>
+            </a>
+        </div>
+
+    </div>
+</div>
