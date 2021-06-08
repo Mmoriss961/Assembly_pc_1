@@ -1,5 +1,8 @@
 import email
 from wsgiref import validate
+
+from captcha import widgets
+from captcha.fields import ReCaptchaField
 from django.db import models
 from  django import forms
 from  django.core.exceptions import ValidationError
@@ -8,6 +11,7 @@ from  django.contrib.auth.models import User
 from django.core.validators import validate_email, EmailValidator
 from email_validator import validate_email, EmailNotValidError
 from assembly.models import Feedback
+from captcha.widgets import ReCaptchaV2Invisible
 
 
 class UserRegisterForm (UserCreationForm):
@@ -17,11 +21,11 @@ class UserRegisterForm (UserCreationForm):
     email = forms.EmailField(label='Email',widget=forms.EmailInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Email",'type':"text"}))
     password1 = forms.CharField(label='Пароль',widget=forms.PasswordInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Пароль",'type':"password"}))
     password2 = forms.CharField(label='Подтверждение пароля',widget=forms.PasswordInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Подтвердите пароль",'type':"password"}))
-
+    captcha = ReCaptchaField(label='',widget=widgets.ReCaptchaV2Checkbox(attrs={'style': 'display: block; width:100% !important;   padding: 0.375rem 0.375rem; '}))
 
     class Meta:
         model = User
-        fields =('username','first_name','last_name','email','password1','password2')
+        fields =('username','first_name','last_name','email','password1','password2','captcha')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -48,10 +52,14 @@ class UserLoginForm (AuthenticationForm):
     password = forms.CharField(label='Пароль',widget=forms.PasswordInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Пароль",'type':"password"}))
 
 class FeedbackForm(forms.ModelForm):
-    from_email  = forms.EmailField(label='Укажите Email',widget=forms.TextInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Email",'type':"text"}))
-    subject  = forms.CharField(label='Тема',widget=forms.TextInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Тема",'type':"text"}))
-    message = forms.CharField(label='Сообщение', widget=forms.Textarea(attrs={'class': 'form-control', 'autocomplete': "off", 'placeholder': "Сообщение", 'type': "text",'rows':5}))
 
+    from_email  = forms.EmailField(label='Укажите Email',widget=forms.TextInput(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Email",'type':"text"}))
+    subject  = forms.CharField(label='Тема',widget=forms.Select(attrs={'class':'form-control','autocomplete':"off",'placeholder':"Тема",'type':"text"},choices =([('Задать вопрос','Задать вопрос'),('Оставить жалобу','Оставить жалобу'),('Поблагодарить','Поблагодарить'),('Внести предложение','Внести предложение')])))
+    message = forms.CharField(label='Сообщение', widget=forms.Textarea(attrs={'class': 'form-control', 'autocomplete': "off", 'placeholder': "Сообщение", 'type': "text",'rows':5}))
+    captcha = ReCaptchaField(label='',widget=widgets.ReCaptchaV2Checkbox(attrs={'style': 'display: block; width:100% !important;   padding: 0.375rem 0.375rem; '}))
     class Meta:
         model = Feedback
-        fields = ['from_email','subject','message']
+        fields = ['from_email','subject','message','captcha']
+
+
+

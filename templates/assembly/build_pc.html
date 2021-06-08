@@ -1,0 +1,54 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    {% include 'assembly/inc/_head.html' %}
+    <title>Подбор ПК</title>
+
+</head>
+<body style="margin-top: 60px;">
+<!--header-->
+{% include 'assembly/inc/_header.html' %}
+<!--/header-->
+
+
+<div class="container bg-white shadow mb-2 text-center" style="min-height: 80vh">
+    <form action="{% url 'result' %}" method="post">
+        {% csrf_token %}
+        {% for obj in test_view %}
+            <h1>{{ obj.test_desc}}</h1>
+            <br>
+            <h2>{{ obj.question_title }}</h2>
+            <br>
+            {% for q in obj.question_set.all %}
+                <h1>{{ q.question_title}}</h1>
+                <br>
+                <div>
+                {% for x in q.answer_set.all %}
+
+                        <input type="checkbox" name="test" value="{{ x.answer_param_proc }} {{ x.answer_param_video}} {{ x.answer_param_ddr }}" >
+                        <label>{{ x.answer_title }}</label>
+                        <img src=" {{ x.answer_img.url }}" width="100" height="100">
+
+                {% endfor %}
+                 </div>
+                <br>
+            {%endfor %}
+
+        {% endfor %}
+        <br>
+        <br>
+        <button class="btn btn-primary" type="submit">Подобрать</button>
+    </form>
+    <br>
+
+</div>
+
+
+<!--/footer-->
+{% include 'assembly/inc/_footer.html' %}
+<!--/footer-->
+
+
+</body>
+</html>

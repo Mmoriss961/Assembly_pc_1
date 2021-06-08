@@ -12,7 +12,7 @@
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Сервисы</a>
                     <div class="dropdown-menu">
                         <a href="#" class="dropdown-item">Конфигуратор</a>
-                        <a href="#" class="dropdown-item">Подборка ПК</a>
+                        <a href="{% url 'test_view' 1 %}" class="dropdown-item">Подборка ПК</a>
                     </div>
                 </div>
                 <div class="nav-item dropdown">
@@ -27,6 +27,7 @@
 
                 {% if request.user.is_authenticated %}
                     <div class="nav-item nav-link ">Здравствуйте, {{ user.username }}</div>
+{#                     <a href="{% url 'admin:index' %}" class="nav-item nav-link">Личный кабинет</a>#}
                 {% endif %}
                 {% if request.user.is_superuser %}
                     <a href="{% url 'admin:index' %}" class="nav-item nav-link">Панель администратора</a>
@@ -35,8 +36,8 @@
                     <a href="{% url 'logout' %}" class="nav-item nav-link">Выход</a>
 
                 {%else  %}
-                    <a href="" class="nav-item nav-link " data-toggle="modal"  onclick="openLoginModal();">Войти</a>
-                    <a href="" class="nav-item nav-link"  data-toggle="modal"  onclick="openRegisterModal();">Зарегистрироваться</a>
+                    <a href="" class="nav-item nav-link " data-toggle="modal"  onclick="openLoginModal(1);">Войти</a>
+                    <a href="" class="nav-item nav-link"  data-toggle="modal"  onclick="openRegisterModal(1);">Зарегистрироваться</a>
 
                 {% endif %}
             </div>

@@ -9,7 +9,8 @@ class Answer(models.Model):
     id_question = models.ForeignKey('Question', models.DO_NOTHING,default=0, db_column='Id_question',verbose_name='Вопрос')  # Field name made lowercase.
     answer_title = models.CharField(db_column='Answer_title', max_length=255,verbose_name='Ответ')  # Field name made lowercase.
     answer_param_proc = models.CharField(db_column='Answer_param_proc', max_length=255,verbose_name='Параметр процессора')  # Field name made lowercase.
-    answer_param_video = models.CharField(db_column='Answer_param_video', max_length=255, verbose_name='Параметр видеокарты')  # Field name made lowercase.
+    answer_param_video = models.CharField(db_column='Answer_param_video', max_length=255, verbose_name='Параметр видеокарты')
+    answer_param_ddr = models.CharField(db_column='Answer_param_ddr', max_length=255, verbose_name='Необходимый объем опер. памяти')# Field name made lowercase.
     answer_img = models.ImageField(db_column='Answer_img', max_length=255, verbose_name='Изображение', upload_to='answer/')
 
     def __str__(self):
@@ -147,7 +148,7 @@ class Ddr(models.Model):
     ddr_frenquency = models.IntegerField(db_column='DDR_frenquency',verbose_name="Частота памяти")  # Field name made lowercase.
     ddr_quantity = models.IntegerField(db_column='DDR_quantity',verbose_name="Модулей памяти в комплекте")  # Field name made lowercase.
     ddr_size = models.IntegerField(db_column='DDR_size',verbose_name="Объем одного модуля")  # Field name made lowercase.
-    ddr_rub = models.IntegerField(db_column='DDR_rub',verbose_name="Стоимость")  # Field name made lowercase.
+    price_rub = models.IntegerField(db_column='DDR_rub',verbose_name="Стоимость")  # Field name made lowercase.
     ddr_img = models.ImageField(db_column='DDR_img', max_length=255, verbose_name='Изображение', upload_to='ddr/')
     def __str__(self):
         return self.name
@@ -244,16 +245,16 @@ class Mboard_size (models.Model):
 
 class PcAssembly(models.Model):
     id_pc_assembly = models.AutoField(db_column='Id_Pc_assembly', primary_key=True)  # Field name made lowercase.
-    id_case = models.ForeignKey(CasePc, models.DO_NOTHING, db_column='Id_case')  # Field name made lowercase.
-    id_cooler = models.ForeignKey(Cooler, models.DO_NOTHING, db_column='Id_cooler')  # Field name made lowercase.
-    id_storage = models.ManyToManyField('Storage', db_column='Id_storage',related_name="PcAssemblyies")  # Field name made lowercase.
-    id_motherboard = models.ForeignKey(Motherboard, models.DO_NOTHING, db_column='Id_Motherboard')  # Field name made lowercase.
-    id_power_supply = models.ForeignKey('PowerSupply', models.DO_NOTHING, db_column='Id_power_supply')  # Field name made lowercase.
-    id_proc = models.ForeignKey('Processor', models.DO_NOTHING, db_column='Id_proc')  # Field name made lowercase.
-    id_vga = models.ForeignKey('Videocard', models.DO_NOTHING, db_column='Id_vga')  # Field name made lowercase.
-    id_user = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='Id_user')  # Field name made lowercase.
-    pc_assembly_date = models.DateTimeField(db_column='Pc_assembly_date')  # Field name made lowercase.
-    pc_assembly_price_end = models.IntegerField(db_column='Pc_assembly_price_end')  # Field name made lowercase.
+    id_case = models.ForeignKey(CasePc, models.DO_NOTHING, db_column='Id_case',verbose_name="Наименовение корпуса")  # Field name made lowercase.
+    id_cooler = models.ForeignKey(Cooler, models.DO_NOTHING, db_column='Id_cooler',verbose_name="Наименовение кулера")  # Field name made lowercase.
+    id_storage = models.ManyToManyField('Storage', db_column='Id_storage',related_name="PcAssemblyies", verbose_name= "Наименование накопителя")  # Field name made lowercase.
+    id_motherboard = models.ForeignKey(Motherboard, models.DO_NOTHING, db_column='Id_Motherboard', verbose_name="Наименование мат. платы")  # Field name made lowercase.
+    id_power_supply = models.ForeignKey('PowerSupply', models.DO_NOTHING, db_column='Id_power_supply', verbose_name= "Наименование блока питания")  # Field name made lowercase.
+    id_proc = models.ForeignKey('Processor', models.DO_NOTHING, db_column='Id_proc', verbose_name= "Наименование процессора")  # Field name made lowercase.
+    id_vga = models.ForeignKey('Videocard', models.DO_NOTHING, db_column='Id_vga', verbose_name= "Наименование видеокарты")  # Field name made lowercase.
+    id_user = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='Id_user', verbose_name="ФИО пользователя")  # Field name made lowercase.
+    pc_assembly_date = models.DateTimeField(db_column='Pc_assembly_date', verbose_name= "Дата/время")  # Field name made lowercase.
+    pc_assembly_price_end = models.IntegerField(db_column='Pc_assembly_price_end', verbose_name= "Итоговая цена")  # Field name made lowercase.
 
     class Meta:
         managed = True
@@ -264,9 +265,9 @@ class PcAssembly(models.Model):
 
 class PowerSupply(models.Model):
     id_power_supply = models.AutoField(db_column='Id_ power_supply', primary_key=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    id_manuf = models.ForeignKey('Manufacturer', models.DO_NOTHING, db_column='Id_manuf')
+    id_manuf = models.ForeignKey('Manufacturer', models.DO_NOTHING, db_column='Id_manuf',verbose_name='Производитель')
     name = models.CharField(db_column='Name', max_length=100,verbose_name="Наименование")  # Field name made lowercase.
-    power_supply_power = models.IntegerField(db_column='Power_supply_ power')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    power_supply_power = models.IntegerField(db_column='Power_supply_ power',verbose_name='Мощность')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     power_supply_pci_e = models.IntegerField(db_column='Power_supply_PCI-E', verbose_name="Количество разъемов 6+2-pin PCI-E")  # Field name made lowercase. Field renamed to remove unsuitable characters.
     price_rub = models.IntegerField(db_column='Price_rub',verbose_name="Стоимость")  # Field name made lowercase.
     power_supply_img = models.ImageField(db_column='Power_supply_img', max_length=255, verbose_name='Изображение', upload_to='power_supply/')
@@ -288,7 +289,7 @@ class Processor(models.Model):
     number_cores = models.IntegerField(db_column='Number_cores',verbose_name="Количество ядер")  # Field name made lowercase.
     proc_frequency = models.IntegerField(db_column='Proc_Frequency',verbose_name="Частота процессора")  # Field name made lowercase.
     price_rub = models.IntegerField(db_column='Price_rub',verbose_name="Стоимость")  # Field name made lowercase.
-    tdp = models.IntegerField(db_column='TDP',verbose_name="Тепловыделение")  # Field name made lowercase.
+    tdp = models.IntegerField(db_column='TDP',verbose_name="Тепловыделение(TDP)")  # Field name made lowercase.
     proc_benchmark = models.IntegerField(db_column='Proc_benchmark',verbose_name="Число баллов в тестах")  # Field name made lowercase.
     proc_max_frenquency_ddr = models.IntegerField(db_column='Proc_max_frenquency_DDR',verbose_name="Максимальная частота опер. памяти, поддерживаемая процессором")  # Field name made lowercase.
     id_type_mem_ddr = models.ForeignKey('TypeMemory', models.DO_NOTHING, db_column='Id_type_mem', verbose_name="Тип опер. памяти, поддерживаемая процессором")  # Field name made lowercase.
@@ -332,12 +333,15 @@ class TypeMemory (models.Model):
 
 class Question(models.Model):
     id_question = models.AutoField(db_column='Id_question', primary_key=True)  # Field name made lowercase.
-    id_test = models.ForeignKey('Test', models.DO_NOTHING, db_column='Id_test')  # Field name made lowercase.
+    id_test = models.ForeignKey('Test', models.DO_NOTHING, db_column='Id_test', verbose_name="Наименование теста")  # Field name made lowercase.
     question_title = models.CharField(db_column='Question_title', max_length=255,verbose_name="Наименование")  # Field name made lowercase.
     question_type = models.IntegerField(db_column='Question_type', verbose_name="Тип вопроса")  # Field name made lowercase.
 
     def __str__(self):
         return self.question_title
+
+
+
     class Meta:
         managed = True
         db_table = 'question'
@@ -347,8 +351,8 @@ class Question(models.Model):
 class Test(models.Model):
     id_test = models.AutoField(db_column='Id_test', primary_key=True)  # Field name made lowercase.
     test_title = models.CharField(db_column='Test_title', max_length=250,verbose_name="Наименование")  # Field name made lowercase.
-    test_desc = models.CharField(db_column='Test_desc', max_length=250)  # Field name made lowercase.
-    test_active = models.IntegerField(db_column='Test_active')  # Field name made lowercase.
+    test_desc = models.CharField(db_column='Test_desc', max_length=250, verbose_name="Описание")  # Field name made lowercase.
+    test_active = models.IntegerField(db_column='Test_active', verbose_name="Активный тест")  # Field name made lowercase.
 
     def __str__(self):
         return self.test_title
@@ -357,6 +361,9 @@ class Test(models.Model):
         db_table = 'test'
         verbose_name = 'тест'
         verbose_name_plural = 'тесты'
+
+    def get_absolute_url(self):
+        return reverse_lazy('test_view', kwargs={'id_test': self.pk})
 
 class Result(models.Model):
     id_result = models.AutoField(db_column='Id_result', primary_key=True)  # Field name made lowercase.
@@ -435,9 +442,9 @@ class Videocard(models.Model):
     id_vga = models.AutoField(db_column='Id_vga', primary_key=True)  # Field name made lowercase.
     id_manuf = models.ForeignKey('Manufacturer', models.DO_NOTHING, db_column='Id_manuf',verbose_name="Производитель")
     name = models.CharField(db_column='Name', max_length=100, verbose_name="Наименование")  # Field name made lowercase.
-    video_frequency = models.IntegerField(db_column='Video_frequency',verbose_name="Частота видеокарты")  # Field name made lowercase.
-    id_type_mem = models.ForeignKey('TypeMemory', models.DO_NOTHING, db_column='Id_type_mem_',verbose_name="Тип памяти")  # Field name made lowercase.
-    memory_frequency = models.IntegerField(db_column='Memory_frequency', verbose_name="Частота памяти")  # Field name made lowercase.
+    video_frequency = models.IntegerField(db_column='Video_frequency',verbose_name="Частота графического процессора")  # Field name made lowercase.
+    id_type_mem = models.ForeignKey('TypeMemory', models.DO_NOTHING, db_column='Id_type_mem_',verbose_name="Тип видеопамяти")  # Field name made lowercase.
+    memory_frequency = models.IntegerField(db_column='Memory_frequency', verbose_name="Частота видеопамяти")  # Field name made lowercase.
     video_memory = models.IntegerField(db_column='Video_memory',verbose_name="Объем видеопамяти")  # Field name made lowercase.
     video_benchmark = models.IntegerField(db_column='Video_benchmark', verbose_name="Число баллов в тестах")  # Field name made lowercase.
     power_supply_unit = models.IntegerField(db_column='Power_supply_unit', verbose_name="Рекомендуемая мощность блока питания")  # Field name made lowercase.

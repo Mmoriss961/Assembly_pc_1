@@ -7,7 +7,7 @@ def RegContext(request):
     form = UserRegisterForm()
 
     context={
-        'title':'Register',
+
         'form':form,
     }
     return context

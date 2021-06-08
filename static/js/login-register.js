@@ -28,33 +28,39 @@ function showLoginForm(){
     $('.error').removeClass('alert alert-danger').html('');
 }
 
-function openLoginModal(){
+function openLoginModal(isError){
     showLoginForm();
     setTimeout(function(){
         $('#loginModal').modal('show');
+        if(isError){
+            $('.form-control').val('');
+        }
     }, 230);
 
 }
-function openRegisterModal(){
+function openRegisterModal(isError){
     showRegisterForm();
     setTimeout(function(){
         $('#loginModal').modal('show');
+        if(isError){
+            $('.form-control').val('');
+        }
     }, 230);
 
 }
 
 $('body').on('hidden.bs.modal', '.modal', function (){
-   //$('.modal-body').find('textarea,input').val('');
-   $('#alert_reg, #alert2_reg, #alert_log , #alert2_log').hide();
+    //$('.modal-body').find('textarea,input').val('');
+    $('#alert_reg, #alert2_reg, #alert_log , #alert2_log').hide();
 });
 
 $(document).on('submit', '#login_form', function (e) {
 
     e.preventDefault();
-    var login_form = $('#login_form');
-    var action = login_form.attr('action');
-    var method = login_form.attr('method');
-    var data_ = login_form.serialize();
+    let login_form = $('#login_form');
+    let action = login_form.attr('action');
+    let method = login_form.attr('method');
+    let data_ = login_form.serialize();
 
     $.ajax({
         type: method,
@@ -64,7 +70,7 @@ $(document).on('submit', '#login_form', function (e) {
 
             if ($(data).find('.alert-danger').length > 0) {
                 $('.modal-custom').html(data);
-                openLoginModal();
+                openLoginModal(0);
                 $('#alert_log').show();
                 $('.errorlist  li ').show();
             }
@@ -73,9 +79,9 @@ $(document).on('submit', '#login_form', function (e) {
 
                     $('.modal-custom').html(data);
                     $('#login_form').empty();
-                    openLoginModal();
+                    openLoginModal(1);
                     $('#alert2_log').show();
-                     setTimeout(window.location.reload.bind(window.location), 2000);}
+                    setTimeout(window.location.reload.bind(window.location), 2000);}
 
                 else
                     alert("Ошибка")
@@ -90,10 +96,10 @@ $(document).on('submit', '#login_form', function (e) {
 $(document).on('submit', '#reg_form', function (e) {
 
     e.preventDefault();
-    var reg_form = $('#reg_form');
-    var action = reg_form.attr('action');
-    var method = reg_form.attr('method');
-    var data_ = reg_form.serialize();
+    let reg_form = $('#reg_form');
+    let action = reg_form.attr('action');
+    let method = reg_form.attr('method');
+    let data_ = reg_form.serialize();
 
     $.ajax({
         type: method,
@@ -103,16 +109,16 @@ $(document).on('submit', '#reg_form', function (e) {
 
             if ($(data).find('.alert-danger').length > 0) {
                 $('.modal-custom').html(data);
-                openRegisterModal();
+                openRegisterModal(0);
                 $('#alert_reg').show();
-                  $('.errorlist  li ').show();
+                $('.errorlist  li ').show();
             }
             else {
                 if ($(data).find('.alert-success').length > 0) {
 
                     $('.modal-custom').html(data);
                     $('#reg_form').empty();
-                    openRegisterModal();
+                    openRegisterModal(1);
                     $('#alert2_reg').show();
                     //location.reload();
                     setTimeout(window.location.reload.bind(window.location), 2000);}

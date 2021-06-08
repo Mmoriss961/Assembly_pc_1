@@ -1,5 +1,6 @@
 {% extends 'assembly/base_characteristic_item.html' %}
 {% load static %}
+{% block title %}Характиристика{% endblock %}
 {%block main_title %}{{char_video.id_manuf}} {{ char_video.name}} {{ char_video.video_memory }} Gb{% endblock %}
 {% block img %}
         {% if char_video.video_img %}
@@ -27,15 +28,15 @@
                 <th scope="row">Производитель</th>
                 <td>{{ char_video.id_manuf}}</td>
             </tr>
-            <th scope="row">Частота видеопроцессора</th>
+            <th scope="row">Частота графического процессора</th>
             <td>{{ char_video.video_frequency }} МГц</td>
             </tr>
             <tr>
                 <th scope="row">Тип памяти</th>
-                <td>GDDR {{ char_video.id_type_mem }}</td>
+                <td> {{ char_video.id_type_mem }}</td>
             </tr>
             <tr>
-                <th scope="row">Частота памяти</th>
+                <th scope="row">Частота видеопамяти</th>
                 <td>{{ char_video.memory_frequency }} МГц</td>
             </tr>
             <tr>

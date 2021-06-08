@@ -12,6 +12,18 @@
 
 }
 
+
+
+#pagination_centred ul{
+  text-align: center;
+}
+#pagination_centred li{
+  display: inline-block;
+  list-style: none;
+  margin: 1px;
+}
+
+
 .bg-black {
   background-color: #1a1b1d;
 }

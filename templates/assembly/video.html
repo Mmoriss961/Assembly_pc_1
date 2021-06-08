@@ -1,77 +1,74 @@
 {% extends 'assembly/base_category.html' %}
 {% load static %}
+
 {% block title_category %} Видеокарты {% endblock %}
 {% block filter %}
-    <div class="text-center">Объем видео памяти</div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            1ГБ
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            2ГБ
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            3ГБ
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            4ГБ
-        </label>
-    </div>
-    <br>
-    <br>
-    <div class="text-center">Производитель</div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            Palit
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            3D-INNO
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            MSI
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"  />
-        <label class="form-check-label" for="flexCheckDefault">
-            Gigabyte
-        </label>
-    </div>
+    <form action="{% url 'filter' %}" method="get">
+        <div class="text-center m-2" >Поиск
+        <div  style="display:flex">
+        <input type="search" placeholder="Введите текст..." name="q" class="form-control" >
+        <button type="submit" class=" btn">
+            <span class="fa fa-search" aria-hidden="true"></span>
+        </button>
+        </div>
+        </div>
+        <br>
+        <div class="text-center" >Объем видео памяти
+        {% for mem in dis_video_mem %}
+            <div class="form-check ml-2 " style="text-align: left">
+                <input class="form-check-input " type="checkbox" name="video_memory" value="{{ mem.video_memory }}" id="flexCheckDefault" />
+                <label class="form-check-label" for="flexCheckDefault">
+                    {{ mem.video_memory }} ГБ
+                </label>
+            </div>
+        {% endfor %}
+        </div>
+        <br>
+        <div class="text-center">Производитель
+        {% for manuf in dis_video_manuf%}
+            <div class="form-check ml-2" style="text-align: left">
+                <input class="form-check-input" type="checkbox" name="id_manuf__name" value="{{ manuf.id_manuf__name }}" id="flexCheckDefault"  />
+                <label class="form-check-label" for="flexCheckDefault">
+                    {{ manuf.id_manuf__name }}
+                </label>
+            </div>
+        {% endfor %}
+        </div>
+        <br>
+        <div class="text-center">Стоимость</div>
+        <div class="m-1" style="display:flex">
+            <input class="form-control" type="number"   name="minPrice"  value="{{minPrice}}" placeholder="От {{ minPrice.price_rub__min}}" max="{{ maxPrice.price_rub__max }}" min="{{ minPrice.price_rub__min }}" >
+            <input class="form-control" type="number"  name="maxPrice"  value="{{ maxPrice }}" placeholder="До {{ maxPrice.price_rub__max}}"  max="{{ maxPrice.price_rub__max }}" min="{{ minPrice.price_rub__min }}" >
+        </div>
+        <br>
+        <button class="btn " type="submit" style="width: 100%!important; white-space: normal !important;">Применить фильтр</button>
+
+    </form>
 {% endblock %}
 {% block items%}
-    {% for item in video %}
-        <div class="col-md-4 col-lg-3 col-sm-4 col-xs-12">
-            <div class="card bg-light block object-fit ">
-                <div class="image-container" >
-                    {% if item.video_img  %}
-                      <a href={{item.get_absolute_url}}><img class="image-fit"   src="{{item.video_img.url}}"></a>
-                    {% else %}
-                      <a href={{item.get_absolute_url}}><img class="image-fit"  src="{% static 'img/plug/plug.jpg' %}"></a>
-                    {% endif %}
-                </div>
-                <div class="card-body text-center">
-                    <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{item.name}}</p>
-                    <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{item.price_rub}} rub</p>
+    {% if page_obj.object_list %}
+        {% for item in page_obj.object_list %}
+            <div class="col-md-4 col-lg-3 col-sm-4 col-xs-12">
+                <div class="card bg-white block object-fit ">
+                    <div class="image-container" >
+                        {% if item.video_img  %}
+                            <a href={{item.get_absolute_url}}><img class="image-fit"   src="{{item.video_img.url}}"></a>
+                        {% else %}
+                            <a href={{item.get_absolute_url}}><img class="image-fit"  src="{% static 'img/plug/plug.jpg' %}"></a>
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{ item.id_manuf }} {{item.name}}</p>
+                        <p class="card-text  text-truncate d-inline-block" style="width: 100%;">{{item.price_rub}} rub</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% else %}
+
+        <h1 class="offset-2">По вашему запросу ничего не найдено</h1>
+    {% endif %}
 {% endblock %}
+
+
 

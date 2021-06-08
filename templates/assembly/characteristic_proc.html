@@ -1,6 +1,6 @@
 {% extends 'assembly/base_characteristic_item.html' %}
 {% load static %}
-{%block main_title %}{{char_proc.id_manuf}} {{ char_proc.name}} {{ char_proc.proc_frequency }} Gb{% endblock %}
+{%block main_title %}{{char_proc.id_manuf}} {{ char_proc.name}}{% endblock %}
 {% block img %}
         {% if char_proc.proc_img %}
             <img src="{{char_proc.proc_img.url}}"   class="image-fit-sec" >
@@ -26,25 +26,21 @@
             <tr>
                 <th scope="row">Производитель</th>
                 <td>{{ char_proc.id_manuf}}</td>
-            </tr>
-            <th scope="row">Частота видеопроцессора</th>
-            <td>{{ char_proc.video_frequency }} МГц</td>
-            </tr>
             <tr>
                 <th scope="row">Сокет</th>
                 <td> {{ char_proc.id_socket }}</td>
             </tr>
             <tr>
-                <th scope="row">Частота памяти</th>
-                <td>{{ char_video.memory_frequency }} МГц</td>
+                <th scope="row">Частота процессора</th>
+                <td>{{ char_proc.proc_frequency }} МГц</td>
             </tr>
             <tr>
-                <th scope="row">Объем видеопамяти</th>
-                <td>{{ char_video.video_memory }} ГБ</td>
+                <th scope="row">Количество ядер</th>
+                <td>{{ char_proc.number_cores }} </td>
             </tr>
             <tr>
-                <th scope="row">Рекомендуемая мощность блока питания</th>
-                <td>{{ char_video.power_supply_unit }} Вт</td>
+                <th scope="row">Тепловыделение(TDP)</th>
+                <td>{{ char_proc.tdp}} Вт</td>
             </tr>
             </tbody>
         </table>

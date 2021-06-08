@@ -23,6 +23,13 @@
                 <form method="POST"   action="{% url 'feedback' %}"  id="fb_form">
                     {% csrf_token %}
                     {{ form3.as_p }}
+
+                    {%comment%}
+                    {{ form3.from_email }}
+                    {{ form3.subject }}
+                    {{ form3.message }}
+                    {{ form3.captcha }}
+                    {% endcomment %}
                     <button class="btn btn-default btn-login" type="submit" >Отправить</button>
                 </form>
             </div>

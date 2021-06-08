@@ -1,7 +1,8 @@
 {% load static %}
-<footer class="bg-black align-text-bottom " >
+<footer class="bg-black align-text-bottom "  >
+
     <!-- Grid container -->
-    <div class="container p-4">
+    <div class="container p-4" >
             <!--Grid row-->
             <div class="row">
                 <!--Grid column-->
@@ -11,7 +12,7 @@
                         <li>
                             <a href="tel:88008888888" class="text-white"> 8 (800) 888-88-88</a>
                         </li>
-                            <a href="" class="text-white" data-toggle="modal"  onclick="openFBModal();">Обратная связь</a>
+                            <a href="" class="text-white" data-toggle="modal"  onclick="openFBModal(1);">Обратная связь</a>
 
                         </li>
                     </ul>
@@ -27,7 +28,7 @@
                             <a href="#!" class="text-white">Конфигуратор</a>
                         </li>
                         <li>
-                            <a href="#!" class="text-white">Подборка ПК</a>
+                            <a href="{% url 'test_view' 1 %}" class="text-white">Подборка ПК</a>
                         </li>
                         <li>
                     </ul>
@@ -87,7 +88,7 @@
     <!-- Grid container -->
 
     <!-- Copyright -->
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);" >
+    <div class="text-center p-3 text-white" style="background-color: rgba(0, 0, 0, 0.2);" >
         © 2021 Copyright
         <a class="text-white" href="#"></a>
     </div>
@@ -97,9 +98,9 @@
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/owl.carousel.min.js' %}"></script>
-<script src="{% static 'js/slider.js' %}"></script>
 <script src="{% static 'js/anchor.js' %}"></script>
 <script src="{% static 'js/bootstrap.js' %}"></script>
 <script src="{% static 'js/feedback.js' %}"></script>
 <script src="{% static 'js/login-register.js' %}"></script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 

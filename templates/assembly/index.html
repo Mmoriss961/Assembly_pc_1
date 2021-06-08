@@ -1,9 +1,10 @@
-{% load static %}
+{% load static  %}
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     {% include 'assembly/inc/_head.html' %}
     <title>Главная страница</title>
+
 </head>
 <body style="margin-top: 60px;">
 <!--header-->
@@ -22,9 +23,8 @@
 <!--/footer-->
 {% include 'assembly/inc/_footer.html' %}
 <!--/footer-->
-<script>
 
+<script src="{% static 'js/slider.js' %}"></script>
 
-</script>
 </body>
 </html>
