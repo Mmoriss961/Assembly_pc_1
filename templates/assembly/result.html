@@ -1,10 +1,110 @@
+{% load static  %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    {% include 'assembly/inc/_head.html' %}
+    <title>Подбор ПК</title>
+
 </head>
-<body>
-<h1>Test</h1>
+<body style="margin-top: 60px;">
+<!--header-->
+{% include 'assembly/inc/_header.html' %}
+<!--/header-->
+<form action="{% url 'save_result' %}" method="POST" >
+    {% csrf_token %}
+    <div class=table-responsive">
+        <table class="table" >
+        <input name ="take_time" type="hidden" value="{{ showtime }}">
+        <input name="id_test" type="hidden" value="{{ id_test }}">
+        <input name="pc_assembly" type="hidden" value="{{ pc_assembly }}">
+            <thead>
+            <tr>
+                <th >Подобранный ПК</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <th scope="row">Процессор</th>
+                <input name ="take_proc" type="hidden" value="{{ take_proc.id_manuf }} {{ take_proc.name}}">
+                <td>{{ take_proc.id_manuf__name }} {{ take_proc.name}}</td>
+                <td><img src="{{ take_proc.proc_img.url}}" height="100" width="100"></td>
+            </tr>
+            <tr>
+            <tr>
+                <th scope="row">Видеокарта</th>
+                <input name ="take_video" type="hidden" value="{{ take_video.id_manuf}} {{ take_video.name}}">
+                <td>{{take_video.id_manuf__name}} {{ take_video.name}}</td>
+                <td><img src="{{ take_video.video_img.url}}" height="100" width="100"></td>
+            <tr>
+            <tr>
+                <th scope="row">Материнская плата</th>
+                <input name ="take_mboard" type="hidden" value="{{ take_mboard.id_manuf}} {{ take_mboard.name}}">
+                <td>{{ take_mboard.id_manuf__name }} {{ take_mboard.name}}</td>
+                <td><img src="{{ take_mboard.mboard_img.url}}" height="100" width="100"></td>
+            <tr>
+            <tr>
+                <th scope="row">Кулер</th>
+                <input name ="take_cooler" type="hidden" value="{{ take_cooler.id_manuf}} {{ take_cooler.name}}">
+                <td>{{take_cooler.id_manuf__name}} {{ take_cooler.name}}</td>
+                <td><img src="{{ take_cooler.cooler_img.url}}" height="100" width="100"></td>
+            <tr>
+            <tr>
+                <th scope="row">Оперативная память</th>
+                <input name ="take_ddr" type="hidden" value="{{ take_ddr.id_manuf}} {{ take_ddr.name}}">
+                <td>{{take_ddr.id_manuf__name}} {{ take_ddr.name}}</td>
+                <td><img src="{{ take_ddr.ddr_img.url}}" height="100" width="100"></td>
+            <tr>
+            <tr>
+                <th scope="row">Блок питания</th>
+                <input name ="take_pow_sup" type="hidden" value="{{ take_pow_sup.id_manuf}} {{ take_pow_sup.name}}">
+                <td>{{take_pow_sup.id_manuf__name}} {{ take_pow_sup.name}}</td>
+                <td><img src="{{ take_pow_sup.power_supply_img.url}}" height="100" width="100"></td>
+            <tr>
+                <input name ="x" type="hidden" value="{{x}}">
+                {% if x == 1%}
+                    <tr>
+                        <th scope="row">Накопитель HDD</th>
+                        <input name ="take_storage_hdd" type="hidden" value="{{ take_storage_hdd.id_manuf}} {{ take_storage_hdd.name}}">
+                        <td>{{take_storage_hdd.id_manuf__name}} {{ take_storage_hdd.name}}</td>
+                        <td><img src="{{ take_storage_hdd.storage_img.url}}" height="100" width="100"></td>
+                    <tr>
+                {% endif %}
+            <tr>
+                <th scope="row">Накопитель SSD</th>
+                <input name ="take_storage" type="hidden" value="{{ take_storage.id_manuf}} {{ take_storage.name}}">
+                <td>{{take_storage.id_manuf__name}} {{ take_storage.name}}</td>
+                <td><img src="{{ take_storage.storage_img.url}}" height="100" width="100"></td>
+            <tr>
+            <tr>
+                <th scope="row">Корпус</th>
+                <input name ="take_case" type="hidden" value="{{ take_case.id_manuf}} {{ take_case.name}}">
+                <td>{{take_case.id_manuf__name}} {{ take_case.name}}</td>
+                <td><img src="{{ take_case.case_img.url}}" height="100" width="100"></td>
+            <tr>
+            <thead>
+            <tr>
+                <th >Итоговая стоимость</th>
+                <th></th>
+                <input name ="price_end" type="hidden" value="{{ price_end}}">
+                <th>{{ price_end }}&#8381</th>
+            </tr>
+            </thead>
+            </tbody>
+        </table>
+        {% if request.user.is_authenticated %}
+            <div style="display:flex;justify-content:center;align-items:center;">
+                <button class="btn btn-primary text-center justify-content-center" type="submit">Сохранить сборку</button>
+            </div>
+        {% else %}
+            <h4>Для того, чтобы сохранить сборку войдите в систему или зарегистрируйтесь</h4>
+        {% endif %}
+        <br>
+    </div>
+</form>
+{% include 'assembly/inc/_footer.html' %}
+<!--/footer-->
+
 </body>
 </html>

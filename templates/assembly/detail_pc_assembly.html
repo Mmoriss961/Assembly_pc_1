@@ -1,0 +1,105 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    {% include 'assembly/inc/_head.html' %}
+    <title>Личный кабинет</title>
+
+</head>
+<body style="margin-top: 60px;">
+<!--header-->
+{% include 'assembly/inc/_header.html' %}
+<!--/header-->
+<form action=" " method="get">
+    <div class="container bg-white shadow mb-2 mt-2 pt-3 " style="min-height: 80vh">
+        <div class=table-responsive">
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>Комлпектующие:</th>
+                    <th>Характеристики:</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " >Процессор: <img src="{{ pc_assembly.id_proc.proc_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_proc.id_manuf }} {{ pc_assembly.id_proc}},Сокет: {{pc_assembly.id_proc.id_socket }}, Количество ядер {{ pc_assembly.id_proc.number_cores }} x {{ pc_assembly.id_proc.proc_frequency }} МГц, Тепловыделение {{pc_assembly.id_proc.tdp }} Вт</td>
+
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Видеокарта: <img src="{{ pc_assembly.id_vga.video_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_vga.id_manuf }} {{ pc_assembly.id_vga }}, Частота ядра/памяти: {{pc_assembly.id_vga.video_frequency}} МГц/{{pc_assembly.id_vga.memory_frequency}} МГц, Объем видеопамяти: {{pc_assembly.id_vga.video_memory}}Гб {{pc_assembly.id_vga.id_type_mem }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Корпус:<img src="{{ pc_assembly.id_case.case_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_case.id_manuf }} {{pc_assembly.id_case }}, Форм-фактор материнской платы: {{ pc_assembly.id_case.id_mboard_size }},Высота кулера: {{ pc_assembly.id_case.max_height_cooler }} мм, Длинна видеокарты: {{ pc_assembly.id_case.max_length_video }} мм, Число внутренних отсеков 3.5: {{ pc_assembly.id_case.form_factor_3_5  }}, Число внутренних отсеков 2.5: {{ pc_assembly.id_case.form_factor_2_5}}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Кулер: <img src="{{ pc_assembly.id_cooler.cooler_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_cooler.id_manuf }} {{ pc_assembly.id_cooler }}, Максимальная рассеиваемая мощность(TDP): {{ pc_assembly.id_cooler.cooler_max_tdp }} Вт , Высота кулера: {{pc_assembly.id_cooler.cooler_height }} мм,
+                        Типы поддерживаемых сокетов: {% for q in pc_assembly.id_cooler.cooler_socket.all %}
+                            {{ q }},
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Оперативная память:<img src="{{ pc_assembly.id_ddr.ddr_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_ddr.id_manuf }} {{ pc_assembly.id_ddr }},, Объем памяти: {{pc_assembly.id_ddr.ddr_quantity }} модуля по {{pc_assembly.id_ddr.ddr_size}} ГБ, Тактовая частота: {{pc_assembly.id_ddr.ddr_frenquency  }} МГц, Тип: {{pc_assembly.id_ddr.ddr_type}}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Материнская плата:<img src="{{ pc_assembly.id_motherboard.mboard_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование:{{ pc_assembly.id_motherboard.id_manuf}} {{ pc_assembly.id_motherboard}}, Форм-фактор : {{ pc_assembly.id_motherboard.id_mboard_size }}, Сокет: {{pc_assembly.id_motherboard.mboard_socket }},
+                        Память: {{pc_assembly.id_motherboard.mboard_max_ddr}} x {{pc_assembly.id_motherboard.id_mboard_type_ddr }} {{pc_assembly.id_motherboard.mboard_max_frenquency_ddr}}МГц </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Накопители:
+                        {% for x in pc_assembly.id_storage.all %}
+                            <img src="{{ x.storage_img.url }}" width="100px" height="100px">
+                            <br>
+                        {% endfor %}
+                    </th>
+                    <td>
+                        {% for x in pc_assembly.id_storage.all %}
+                            Наименованиие: {{ x.id_manuf}} {{x.name}}, Тип: {{ x.id_storage_type }}, Форм-Фактор: {{x.id_form_factor}}, Объём: {{ x.storage_volume }}Гб, Скорость чтения/записи: {{ x.storage_read_speed }}/{{x.storage_write_speed  }} МБ/c
+                            <br>
+                            <br>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Блок питания:<img src="{{ pc_assembly.id_power_supply.power_supply_img.url }}" width="100px" height="100px"></th>
+                    <td>Наименование: {{ pc_assembly.id_power_supply.id_manuf}} {{ pc_assembly.id_power_supply }}, Мощность : {{ pc_assembly.id_power_supply.power_supply_power }} Вт, Количество разъемов 6+2-pin PCI-E: {{pc_assembly.id_power_supply.power_supply_pci_e}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Итоговая цена:</th>
+                    <td><h5>{{ pc_assembly.pc_assembly_price_end}} &#8381</h5>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Время формирования сборки:</th>
+                    <td>{{ pc_assembly.pc_assembly_date }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Автор сборки:</th>
+                    <td>{{ pc_assembly.id_user.username }}
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+<!--/footer-->
+{% include 'assembly/inc/_footer.html' %}
+<!--/footer-->
+
+</body>
+</html>

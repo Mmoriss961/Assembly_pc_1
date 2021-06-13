@@ -4102,7 +4102,7 @@ tbody.collapse.show {
   }
 }
 
-@media (max-width: 799.98px) {
+@media (max-width: 1098.98px) {
   .navbar-expand-md > .container,
   .navbar-expand-md > .container-fluid {
     padding-right: 0;
@@ -4110,7 +4110,7 @@ tbody.collapse.show {
   }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1100px) {
   .navbar-expand-md {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;

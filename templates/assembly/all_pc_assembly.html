@@ -1,0 +1,86 @@
+{% load static  %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    {% include 'assembly/inc/_head.html' %}
+    <title>Все сборки пользователей</title>
+</head>
+<body style="margin-top: 60px;">
+<!--header-->
+{% include 'assembly/inc/_header.html' %}
+<!--/header-->
+
+<form action="{% url 'all_pc_assembly' %}" method="get">
+    <div class="container bg-white shadow mb-2 text-center" id = "pagination" style="min-height: 80vh">
+        <div class=table-responsive">
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>Наименование:</th>
+                    <th>Стоимость:</th>
+                    <th>Дата сборки:</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if  all_pc_assembly %}
+                    <tr>
+                        {% for obj in all_pc_assembly  %}
+                            <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " > <a href="{{ obj.get_absolute_url }}"> {{ obj.id_proc }} + {{ obj.id_vga }}</a></th>
+                            <td>{{ obj.pc_assembly_price_end|intcomma}}  &#8381</td>
+                            <td>{{ obj.pc_assembly_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    <tr>
+                        <th>Общее число сборок:</th>
+                        <th></th>
+                        <th>{{ get_count }}</th>
+                    </tr>
+                    </tbody>
+                    </table>
+                {% else %}
+                    <h3>Сборки пользователей не найдены.</h3>
+                    <a href="{% url 'test_view' 1 %}">Испытай первым сервис по подбору ПК!</a>
+                {% endif %}
+
+        </div>
+
+    {% if page_obj.has_other_pages %}
+        <div id = "pagination_centred " >
+            <nav id = "pag_1">
+                <ul class="pagination justify-content-center m-1">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item autocomplite" >
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">«</a>
+                        </li>
+                    {% endif %}
+                    {% for p in page_obj.paginator.page_range %}
+                        {% if page_obj.number == p %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                            </li>
+                        {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3 %}
+                            <li class="page-item ">
+                                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item ">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" >»</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+
+
+<!--/footer-->
+{% include 'assembly/inc/_footer.html' %}
+<!--/footer-->
+<script src="{% static 'js/pagination.js' %}"></script>
+
+</body>
+</html>

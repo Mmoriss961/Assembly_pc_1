@@ -8,11 +8,11 @@
 </head>
 <body style="margin-top: 65px;">
 {% include 'assembly/inc/_header.html' %}
-<div class="offset-1 flex-row pr-sm-2">
+<div class="offset-1 flex-row pr-sm-2" >
     <br>
     <h1>{%block main_title %}Наименование{% endblock %} </h1>
 </div>
-<div class="mr-2 ml-2" >
+<div class="mr-2 ml-2" style="min-height: 80vh">
     <div class="row">
         <div class="col-md-4 image-container-sec  " >
                 {% block img %}
@@ -23,13 +23,13 @@
                 {% endblock %}
         </div>
     </div>
-    <div class="offset-1" >
-    <br>
-    <h2>Отзывы</h2>
-    </div>
-    <div class="container bg-white shadow mb-2" style="min-height: 50vh">
-        <h2>Комментарии</h2>
-    </div>
+{#    <div class="offset-1" >#}
+{#    <br>#}
+{#    <h2>Отзывы</h2>#}
+{#    </div>#}
+{#    <div class="container bg-white shadow mb-2" style="min-height: 50vh">#}
+{#        <h2>Комментарии</h2>#}
+{#    </div>#}
 
 </div>
 

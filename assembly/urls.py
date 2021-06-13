@@ -29,6 +29,13 @@ urlpatterns = [
 
     path('result/',result,name='result'),
 
+    path('result_save/',save_result,name='save_result'),
+
+    path('my_acc/',result_list.as_view(), name ='result_list'),
+
+    path('all_pc_assembly',all_pc_assembly.as_view(), name='all_pc_assembly'),
+
+
 
     path('videocards/<int:id_vga>/', characteristic_video, name='characteristic_video'),
     path('processors/<int:id_proc> /', characteristic_proc, name='characteristic_proc'),
@@ -39,6 +46,8 @@ urlpatterns = [
     path('processors/<int:id_power_supply> /', characteristic_power_supply, name='characteristic_power_supply'),
     path('processors/<int:id_proc> /', characteristic_proc, name='characteristic_storage'),
 
+    path('user_detail_result/<int:id_result>/', detail_result.as_view(), name='detail_result'),
+    path('assembly_detail_result/<int:id_pc_assembly>/', detail_pc_assembly.as_view(), name='detail_pc_assembly'),
 
     path('filter-data/',filter_video.as_view(), name ='filter'),
     #path('search/',Search.as_view(), name ='search'),

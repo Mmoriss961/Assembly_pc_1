@@ -8,26 +8,27 @@
         <div class="collapse navbar-collapse justify-content-between " id="navbarCollapse">
             <div class="navbar-nav">
                 <a href="{% url 'home' %}#item"   class="nav-item nav-link  ">Комплектующие</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Сервисы</a>
-                    <div class="dropdown-menu">
-                        <a href="#" class="dropdown-item">Конфигуратор</a>
-                        <a href="{% url 'test_view' 1 %}" class="dropdown-item">Подборка ПК</a>
-                    </div>
-                </div>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Готовые сборки</a>
-                    <div class="dropdown-menu">
-                        <a href="#" class="dropdown-item">Сборки пользователей</a>
-                        <a href="#" class="dropdown-item">Сборки сервиса</a>
-                    </div>
-                </div>
+                <a href="{% url 'test_view' 1 %}"   class="nav-item nav-link  ">Подбор ПК</a>
+                <a href="{% url 'all_pc_assembly' %}"   class="nav-item nav-link  ">Готовые сборки</a>
+{#                <div class="nav-item dropdown">#}
+{#                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Сервисы</a>#}
+{#                    <div class="dropdown-menu">#}
+{#                        <a href="#" class="dropdown-item">Конфигуратор</a>#}
+{#                        <a href="{% url 'test_view' 1 %}" class="dropdown-item">Подборка ПК</a>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="nav-item dropdown">#}
+{#                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Готовые сборки</a>#}
+{#                    <div class="dropdown-menu">#}
+{#                        <a href="#" class="dropdown-item">Сборки пользователей</a>#}
+{#                        <a href="#" class="dropdown-item">Сборки сервиса</a>#}
+{#                    </div>#}
+{#                </div>#}
             </div>
             <div class="navbar-nav">
-
                 {% if request.user.is_authenticated %}
-                    <div class="nav-item nav-link ">Здравствуйте, {{ user.username }}</div>
-{#                     <a href="{% url 'admin:index' %}" class="nav-item nav-link">Личный кабинет</a>#}
+                    <div class="nav-item nav-link " style="cursor:default !important;">Здравствуйте, {{ user.username }}</div>
+                     <a href="{% url 'result_list' %}" class="nav-item nav-link">Ваш список сборок</a>
                 {% endif %}
                 {% if request.user.is_superuser %}
                     <a href="{% url 'admin:index' %}" class="nav-item nav-link">Панель администратора</a>

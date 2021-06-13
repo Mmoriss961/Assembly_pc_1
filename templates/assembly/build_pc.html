@@ -13,8 +13,9 @@
 
 
 <div class="container bg-white shadow mb-2 text-center" style="min-height: 80vh">
-    <form action="{% url 'result' %}" method="post">
+    <form action="{% url 'result' %}" method="POST" >
         {% csrf_token %}
+        <input name = 'id_test' value="{{ id_test }}" type="hidden">
         {% for obj in test_view %}
             <h1>{{ obj.test_desc}}</h1>
             <br>
@@ -23,22 +24,34 @@
             {% for q in obj.question_set.all %}
                 <h1>{{ q.question_title}}</h1>
                 <br>
-                <div>
-                {% for x in q.answer_set.all %}
+                <div class="test_inp">
+                    {% for x in q.answer_set.all %}
 
-                        <input type="checkbox" name="test" value="{{ x.answer_param_proc }} {{ x.answer_param_video}} {{ x.answer_param_ddr }}" >
+                        {% if q.question_type == 0 %}
+
+                            <input type="checkbox"   name="test" value="{{ x.answer_param_proc }} {{ x.answer_param_video}} {{ x.answer_param_ddr }}"  >
+
+                        {% else %}
+
+                            <input type="radio"   name="test" value="{{ x.answer_param_proc }} {{ x.answer_param_video}} {{ x.answer_param_ddr }}" >
+
+                        {% endif %}
                         <label>{{ x.answer_title }}</label>
                         <img src=" {{ x.answer_img.url }}" width="100" height="100">
 
-                {% endfor %}
-                 </div>
+                    {% endfor %}
+                </div>
                 <br>
             {%endfor %}
 
         {% endfor %}
         <br>
         <br>
-        <button class="btn btn-primary" type="submit">Подобрать</button>
+         {% if request.user.is_authenticated %}
+        <button class="btn btn-primary test_btn"  type="submit" >Подобрать</button>
+             {% else %}
+             <h4>Для того, чтобы подобрать ПК войдите в систему или зарегистрируйтесь</h4>
+        {% endif %}
     </form>
     <br>
 
@@ -47,8 +60,16 @@
 
 <!--/footer-->
 {% include 'assembly/inc/_footer.html' %}
+<script src="{% static 'js/error_checkbox.js' %}"></script>
 <!--/footer-->
-
+{#<script>#}
+{#    $('.test_btn').click(function(){#}
+{#        if ($('.test_inp').filter(function(){  return $(this).find(':checked').length === 0 }).length > 0 ) {#}
+{#            alert('Пожалуйста, ответьте на вопросы из каждой категории');#}
+{#            return false#}
+{#        }#}
+{#    });#}
+{#</script>#}
 
 </body>
 </html>

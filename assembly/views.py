@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.db.models import Min,Max
 
-from Assembly_pc.settings  import DEFAULT_FROM_EMAIL
+from Assembly_pc.settings import DEFAULT_FROM_EMAIL
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import UserRegisterForm, UserLoginForm, FeedbackForm
@@ -17,12 +17,17 @@ from . import forms
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from time import gmtime, strftime
+
+
+
 
 
 
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
+
         if form.is_valid():
             form.save()
             messages.success(request,'Вы успешно зарегистрировались')
@@ -94,40 +99,221 @@ def index (request):
 
 def test_view(request, id_test):
     test=Test.objects.filter(pk=id_test).prefetch_related('question_set','question_set__answer_set')
-    return render(request,'assembly/build_pc.html', {'test_view':test,'title':'Сборка ПК'})
-#
+    return render(request,'assembly/build_pc.html', {'test_view':test,'title':'Сборка ПК','id_test':test[0].id_test})
+
 def result(request):
     if request.method=='POST':
         form=request.POST.getlist('test')
-        dicts={}
-        keys=len(form)
-        print(keys)
-        print(form)
-        values = list(map(int,form.split()))
-        # values_ = str(values.split(','))
-        # result = [c for c in values[0]]
-        print(values)
+        dicts={"proc":[],"video":[],"ddr":[]}
+        x=int(form[len(form)-1][0]) #переменная для поиска накопителя( 1 - находим hdd, 0 не находим)
+        # print(x)
+        for i in form:
+            k=i.split()
+            dicts["proc"].append(int(k[0]))
+            dicts["video"].append(int(k[1]))
+            dicts["ddr"].append(int(k[2]))
+        proc = max(dicts["proc"])
+        video = max(dicts["video"])
+        ddr = max(dicts["ddr"])
+        id_test= request.POST.get('id_test')
+        # print(id_test)
+        # print(form)
+        # print(proc,video,ddr)
+
+        queryset = Processor.objects.filter(Q(proc_benchmark__gte=proc) & Q(proc_max_syze_ddr__gte=ddr))
+        take_price_proc = queryset.aggregate(Min('price_rub'))
+        take_proc = queryset.filter(price_rub=take_price_proc['price_rub__min']).first()
+        # print(take_proc)
+
+        queryset = Motherboard.objects.filter(mboard_socket=take_proc.id_socket)
+        take_price_mboard = queryset.aggregate(Min('price_rub'))
+        take_mboard = queryset.filter(price_rub=take_price_mboard['price_rub__min']).first()
+        # print(take_mboard)
+
+        queryset = Cooler.objects.filter(Q(cooler_max_tdp__gte=take_proc.tdp) & Q(cooler_socket=take_proc.id_socket))
+        queryset1= Cooler.objects.all()
+        take_price_cooler = queryset.aggregate(Min('price_rub'))
+        take_cooler = queryset.filter(price_rub=take_price_cooler['price_rub__min']).first()
+        # print(take_cooler)
+        print(queryset1)
+
+        # flag = 0
+        queryset = Ddr.objects.filter(Q(ddr_size=ddr/2) & Q(ddr_size__lte=take_proc.proc_max_syze_ddr) & Q(ddr_type=take_proc.id_type_mem_ddr))
+        if not(queryset) :
+            queryset = Ddr.objects.filter(Q(ddr_size=ddr) & Q(ddr_size__lte=take_proc.proc_max_syze_ddr) & Q(ddr_type=take_proc.id_type_mem_ddr))
+            # flag = 1
+        take_price_ddr = queryset.aggregate(Min('price_rub'))
+        take_ddr = queryset.filter(price_rub=take_price_ddr['price_rub__min']).first()
+        # print(take_ddr)
+
+        queryset = Videocard.objects.filter( Q(video_benchmark__gte=video ))
+        take_price_video = queryset.aggregate(Min('price_rub'))
+        take_video = queryset.filter(price_rub=take_price_video['price_rub__min']).first()
+        # print(take_video)
+
+        if take_mboard.mboard_m2 :
+            queryset = Storage.objects.filter( Q(id_storage_type=2) & Q(storage_volume__gte=120) & Q(id_form_factor=2))
+            # print(queryset)
+        else:
+            queryset = Storage.objects.filter(Q(id_storage_type=2) & Q(id_form_factor=1) & Q(storage_volume__gte=120))
+        take_price_storage = queryset.aggregate(Min('price_rub'))
+        take_storage1 = queryset.filter(price_rub=take_price_storage['price_rub__min'])
+        take_storage = queryset.filter(price_rub=take_price_storage['price_rub__min']).first()
+
+        # print(take_storage)
+
+        take_price_storage_hdd = 0
+        take_storage_hdd = Storage.objects.none()
+        take_storage_hdd1 = Storage.objects.none()
+        if x == 1:
+            queryset = Storage.objects.filter( Q(id_storage_type=1 )& Q(storage_volume__gte=500))
+            take_price_storage_hdd = queryset.aggregate(Min('price_rub'))
+            take_storage_hdd1 = queryset.filter(price_rub=take_price_storage_hdd['price_rub__min'])
+            take_storage_hdd = queryset.filter(price_rub=take_price_storage_hdd['price_rub__min']).first()
+            # print(take_storage_hdd)
+            # print(take_storage_hdd1)
+        # print(take_price_storage_hdd)
 
 
-        # for (index, elem) in enumerate(values):
-        #     values[index]=elem+"!"
-        # print(values)
-        # for i in keys:
-        #     dicts[i]=values[i]
-        # print(dicts)
-        # d={}
-        # for k in form.items():
-        #     if k.startswith('test'):
-        #      d = d(k)
+        if take_storage:
+            if take_storage.id_form_factor == 1:
+                queryset = CasePc.objects.filter(Q(max_height_cooler__gte=take_cooler.cooler_height )
+                                                  & Q(max_length_video__gte =take_video.video_length)
+                                                  & Q(id_mboard_size = take_mboard.id_mboard_size)
+                                                  & Q(form_factor_3_5_gte=0))
+            else:
+                queryset = CasePc.objects.filter( Q(max_height_cooler__gte=take_cooler.cooler_height )
+                                                  & Q(max_length_video__gte =take_video.video_length)
+                                                  & Q(id_mboard_size = take_mboard.id_mboard_size))
+        else:
+            queryset = CasePc.objects.filter(Q(max_height_cooler__gte=take_cooler.cooler_height)
+                                             & Q(max_length_video__gte=take_video.video_length)
+                                             & Q(id_mboard_size=take_mboard.id_mboard_size))
 
-        # dict={v for k, v in form.items()if k.startswith ('test')}
-        # d=dict
-        # print(d)
+        take_price_case = queryset.aggregate(Min('price_rub'))
+        take_case = queryset.filter(price_rub=take_price_case['price_rub__min']).first()
+        # print(take_case)
+
+        if take_video.video_pci_e:
+            queryset = PowerSupply.objects.filter(Q(power_supply_power__gte=take_video.power_supply_unit)
+                                              & Q(power_supply_pci_e__gte=take_video.video_pci_e))
+        else:
+            queryset = PowerSupply.objects.filter(Q(power_supply_power__gte=take_video.power_supply_unit))
+        take_price_pow_sup = queryset.aggregate(Min('price_rub'))
+        take_pow_sup = queryset.filter(price_rub=take_price_pow_sup['price_rub__min']).first()
+        # print(take_pow_sup)
+        # if flag == 0:
+        #     take_price_ddr['price_rub__min'] = take_price_ddr['price_rub__min']*2
+        #     print(take_price_ddr['price_rub__min'])
+        if x == 0:
+            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+\
+                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+\
+                        take_price_storage['price_rub__min']+take_price_storage_hdd+take_price_ddr['price_rub__min']+take_price_proc['price_rub__min']
+        else:
+            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+\
+                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+\
+                        take_price_storage['price_rub__min']+take_price_storage_hdd['price_rub__min']+take_price_ddr['price_rub__min']+take_price_proc['price_rub__min']
+        # print(price_end)
+
+        current_user= AuthUser.objects.get(pk=request.user.id)
+        # print(request.user.id)
+        showtime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        # print(take_storage_hdd1)
+        if len(take_storage_hdd1)>0:
+            take_storage_end = take_storage_hdd1|take_storage1
+        else:
+            take_storage_end =take_storage1
+        instance = PcAssembly.objects.create(id_case=take_case, id_cooler=take_cooler,id_motherboard=take_mboard,
+                                             id_power_supply=take_pow_sup,id_proc=take_proc, id_vga=take_video,id_ddr=take_ddr,
+                                             id_user =current_user, pc_assembly_date=showtime,pc_assembly_price_end=price_end)
+        instance.id_storage.set(take_storage_end)
+        instance = instance.save()
+        pc_assembly = PcAssembly.objects.get(pc_assembly_date=showtime)
+
+        # print(take_storage_end)
+
+        context = {}
+        if x == 1:
+            context = {
+                'title': 'Результат',
+                'take_proc': take_proc,
+                'take_mboard': take_mboard,
+                'take_cooler': take_cooler,
+                'take_ddr': take_ddr,
+                'take_video': take_video,
+                'take_storage': take_storage,
+                'take_storage_hdd': take_storage_hdd,
+                'take_case': take_case,
+                'take_pow_sup': take_pow_sup,
+                'x': x,
+                'price_end': price_end,
+                'showtime':showtime,
+                'id_test':id_test,
+                'pc_assembly':pc_assembly.pk,
+
+            }
+        else:
+            context = {
+                'title': 'Результат',
+                'take_proc': take_proc,
+                'take_mboard': take_mboard,
+                'take_cooler': take_cooler,
+                'take_ddr': take_ddr,
+                'take_video': take_video,
+                'take_storage': take_storage,
+                'take_case': take_case,
+                'take_pow_sup': take_pow_sup,
+                'x': x,
+                'price_end': price_end,
+                'showtime':showtime,
+                'id_test':id_test,
+                'pc_assembly': pc_assembly.pk,
+
+            }
+        return render(request, 'assembly/result.html', context)
+
+def save_result(request):
+    if request.method == 'POST':
+        form = request.POST
+        take_proc = form.get('take_proc')
+        take_video = form.get('take_video')
+        take_mboard = form.get('take_mboard')
+        take_cooler = form.get('take_cooler')
+        take_ddr = form.get('take_ddr')
+        take_pow_sup = form.get('take_pow_sup')
+        take_time=form.get('take_time')
+        id_test=int(form.get('id_test'))
+        pc_assembly=int(form.get('pc_assembly'))
+        # print(pc_assembly)
+
+        x=form.get('x')
+        if x == '1':
+            take_storage_hdd = form.get('take_storage_hdd')
+            # print(take_storage_hdd)
+        else:
+            take_storage_hdd = "Отсутствует"
+        take_storage = form.get('take_storage')
+        take_case = form.get('take_case')
+        price_end = form.get('price_end')
+
+        current_user= AuthUser.objects.get(pk=request.user.id)
+        pc_assembly=PcAssembly.objects.get(pk=pc_assembly)
+        id_test=Test.objects.get(pk=id_test)
+
+        # print(take_proc,take_video,take_mboard,take_cooler,take_ddr,take_pow_sup,
+        #       take_storage_hdd,take_storage,take_case,price_end,take_time, current_user)
+
+        instance = Result.objects.create(result_date=take_time, result_title=take_proc+" "+take_video,power_supply=take_pow_sup,
+                                             storage="HDD:"+take_storage_hdd+"; SSD:"+take_storage,mboard=take_mboard, proc=take_proc,id_pc_assembly=pc_assembly,
+                                             video =take_video, ddr=take_ddr,cooler=take_cooler, case=take_case, result_price_end = price_end ,id_test = id_test,user=current_user )
+
+        instance = instance.save()
+    return redirect('result_list')
 
 
+def my_acc(request):
+    return render(request, 'assembly/my_account.html')
 
-
-    return render(request,'assembly/result.html')
 
 
 # def question_view(request, id_question):
@@ -142,12 +328,117 @@ def result(request):
 #         answer =[]
 #         for a in q
 
+class all_pc_assembly(ListView):
+    model=PcAssembly
+    template_name = "assembly/all_pc_assembly.html"
+    context_object_name = "all_pc_assembly"
+    paginate_by = 12
+
+    def get_queryset(self):
+        queryset = PcAssembly.objects.all()
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(all_pc_assembly, self).get_context_data(*args, **kwargs)
+        get_count = PcAssembly.objects.count()
+        context['get_count'] = get_count
+        return context
+
+class detail_pc_assembly(DetailView):
+    model = PcAssembly
+    template_name = "assembly/detail_pc_assembly.html"
+    context_object_name = "detail_pc_assembly"
+    pk_url_kwarg = "id_pc_assembly"
+
+    def get_object(self, queryset=None):
+        pk=self.kwargs.get(self.pk_url_kwarg)
+        # print(pk)
+        queryset = PcAssembly.objects.get(pk=pk)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(detail_pc_assembly, self).get_context_data( *args, **kwargs)
+        get_q = self.get_object().id_pc_assembly
+        # print(get_q)
+        pc_assembly = PcAssembly.objects.get(id_pc_assembly=get_q)
+        context['pc_assembly'] = pc_assembly
+        # context['pc_assembly']=pc_assembly_img
+        # print(pc_assembly_img.id_proc.proc_img)
+        return context
+
+    # def characteristic_video(self, id_pc_assembly):
+    #     detail_pc_assembly = PcAssembly.objects.get(pk=id_pc_assembly)
+    #     return render(self, 'assembly/detail_pc_assembly.html',
+    #                   {"detail_pc_assembly": characteristic_video, "title": "Характиристики видеокарты"})
+    # def get_queryset(self):
+    #     queryset = PcAssembly.objects.filter(id_pc_assembly=self.request)
+    #     print(queryset)
+    #     return queryset
+    #
+    # def get_context_data(self, *args, **kwargs):
+    #     context = super(detail_pc_assembly, self).get_context_data(*args, **kwargs)
+    #     get_q1 = self.get_object().id_pc_assembly.id_pc_assembly
+    #     print(get_q1)
+    #     pc_assembly = PcAssembly.objects.get(id_pc_assembly=get_q1)
+    #     context['pc_assembly'] = pc_assembly
+    #     # context['pc_assembly']=pc_assembly_img
+    #     # print(pc_assembly_img.id_proc.proc_img)
+    #     return context
+
+
+
+class result_list(ListView):
+    model=Result
+    template_name = "assembly/my_account.html"
+    context_object_name = "result_list"
+    paginate_by = 12
+
+    def get_queryset(self, queryset=None):
+        queryset = Result.objects.filter(user_id=self.request.user.id).order_by('result_date')
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(result_list, self).get_context_data(*args, **kwargs)
+        get_count = Result.objects.filter(user_id=self.request.user.id).count()
+        context['get_count'] = get_count
+        return context
+
+class detail_result(DetailView):
+    model = Result
+    template_name = "assembly/detail_result.html"
+    context_object_name = "detail_result"
+    pk_url_kwarg = "id_result"
+
+    def get_object(self, queryset=None):
+        pk=self.kwargs.get(self.pk_url_kwarg)
+        queryset = Result.objects.prefetch_related('id_pc_assembly', 'id_test').get(pk=pk)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(detail_result, self).get_context_data(*args, **kwargs)
+        get_q = self.get_object().id_pc_assembly.id_pc_assembly
+        # print(get_q)
+        pc_assembly = PcAssembly.objects.prefetch_related('id_proc','id_vga','id_ddr','id_cooler','id_case',
+                                                              'id_storage','id_motherboard','id_power_supply').get(id_pc_assembly=get_q)
+        context['pc_assembly'] = pc_assembly
+        # context['pc_assembly']=pc_assembly_img
+        # print(pc_assembly_img.id_proc.proc_img)
+        return context
+
+
+# def det_res(request,id):
+#     det_res=Result.objects.get(pk=id)
+#     return render(request,'assembly/detail_result.html',{'detail_result':det_res})
+
+
+
+
 
 class video_list(ListView):
     model = Videocard
     template_name = "assembly/video.html"
     context_object_name = "video"
-    paginate_by = 3
+    paginate_by = 12
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -259,7 +550,7 @@ def  get_filters(request):
 '''
 def filter_data(request):
     dis_video_mem =request.GET.getlist('video_memory')
-    dis_video_manuf = request.GET.getlist('id_manuf__name')
+    dis_video_manuf = request.GET.getlist('id_manuf__name')q
     video =Videocard.objects.all()
     if len(dis_video_mem)>0:
         video=video.filter(video_memory__in = dis_video_mem).distinct()

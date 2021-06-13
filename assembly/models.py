@@ -251,10 +251,18 @@ class PcAssembly(models.Model):
     id_motherboard = models.ForeignKey(Motherboard, models.DO_NOTHING, db_column='Id_Motherboard', verbose_name="Наименование мат. платы")  # Field name made lowercase.
     id_power_supply = models.ForeignKey('PowerSupply', models.DO_NOTHING, db_column='Id_power_supply', verbose_name= "Наименование блока питания")  # Field name made lowercase.
     id_proc = models.ForeignKey('Processor', models.DO_NOTHING, db_column='Id_proc', verbose_name= "Наименование процессора")  # Field name made lowercase.
-    id_vga = models.ForeignKey('Videocard', models.DO_NOTHING, db_column='Id_vga', verbose_name= "Наименование видеокарты")  # Field name made lowercase.
+    id_vga = models.ForeignKey('Videocard', models.DO_NOTHING, db_column='Id_vga', verbose_name= "Наименование видеокарты")
+    id_ddr = models.ForeignKey('Ddr', models.DO_NOTHING, db_column='Id_ddr', verbose_name= "Наименование оперативной памяти")# Field name made lowercase.
     id_user = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='Id_user', verbose_name="ФИО пользователя")  # Field name made lowercase.
-    pc_assembly_date = models.DateTimeField(db_column='Pc_assembly_date', verbose_name= "Дата/время")  # Field name made lowercase.
+    pc_assembly_date = models.DateTimeField(db_column='Pc_assembly_date', verbose_name= "Дата/время создания")  # Field name made lowercase.
     pc_assembly_price_end = models.IntegerField(db_column='Pc_assembly_price_end', verbose_name= "Итоговая цена")  # Field name made lowercase.
+
+    def __str__(self):
+        return "{} {}".format(self.id_proc, self.id_vga)
+
+
+    def get_absolute_url(self):
+        return reverse_lazy('detail_pc_assembly', kwargs={"id_pc_assembly": self.pk})
 
     class Meta:
         managed = True
@@ -367,18 +375,20 @@ class Test(models.Model):
 
 class Result(models.Model):
     id_result = models.AutoField(db_column='Id_result', primary_key=True)  # Field name made lowercase.
-    result_date = models.DateTimeField(db_column='Result_date')  # Field name made lowercase.
-    result_title = models.CharField(db_column='Result_title', max_length=255,verbose_name="Наименование")  # Field name made lowercase.
-    power_supply = models.CharField(db_column='Power_supply', max_length=255)  # Field name made lowercase.
-    storage = models.CharField(db_column='Storage', max_length=255)  # Field name made lowercase.
-    mboard = models.CharField(db_column='Mboard', max_length=255)  # Field name made lowercase.
-    proc = models.CharField(db_column='Proc', max_length=255)  # Field name made lowercase.
-    id_pc_assembly = models.ForeignKey(PcAssembly, models.DO_NOTHING, db_column='Id_Pc_assembly')  # Field name made lowercase.
-    video = models.CharField(db_column='Video', max_length=255)  # Field name made lowercase.
-    ddr = models.CharField(db_column='DDR', max_length=255)  # Field name made lowercase.
-    cooler = models.CharField(db_column='Cooler', max_length=255)  # Field name made lowercase.
-    result_price_end = models.IntegerField(db_column='Result_price_end')
-    id_test = models.ForeignKey(Test, models.DO_NOTHING, db_column='Id_test')
+    result_date = models.DateTimeField(db_column='Result_date',verbose_name="Дата/время создания")  # Field name made lowercase.
+    result_title = models.CharField(db_column='Result_title', max_length=255,verbose_name="Наименование сохраненной сборки")  # Field name made lowercase.
+    power_supply = models.CharField(db_column='Power_supply', max_length=255,verbose_name="Наименование блока питания")  # Field name made lowercase.
+    storage = models.CharField(db_column='Storage', max_length=255,verbose_name="Наименование накопителя")  # Field name made lowercase.
+    mboard = models.CharField(db_column='Mboard', max_length=255,verbose_name="Наименование мат. платы")  # Field name made lowercase.
+    proc = models.CharField(db_column='Proc', max_length=255,verbose_name="Наименование процессора")  # Field name made lowercase.
+    id_pc_assembly = models.ForeignKey(PcAssembly, models.DO_NOTHING, db_column='Id_Pc_assembly',verbose_name="Наименование сборки")  # Field name made lowercase.
+    video = models.CharField(db_column='Video', max_length=255, verbose_name="Наименование видеокарты")  # Field name made lowercase.
+    ddr = models.CharField(db_column='DDR', max_length=255, verbose_name="Наименование оперативной памяти")  # Field name made lowercase.
+    cooler = models.CharField(db_column='Cooler', max_length=255, verbose_name="Наименовение кулера")  # Field name made lowercase.
+    case = models.CharField(db_column='CasePC', max_length=255, verbose_name="Наименовение корпуса")
+    result_price_end = models.IntegerField(db_column='Result_price_end',verbose_name="Итоговая цена")
+    user = models.ForeignKey(AuthUser,models.DO_NOTHING, db_column='Id_user', verbose_name="ФИО пользователя")
+    id_test = models.ForeignKey(Test, models.DO_NOTHING, db_column='Id_test', verbose_name="Наименование теста")
 
     def __str__(self):
         return self.result_title
@@ -387,6 +397,9 @@ class Result(models.Model):
         db_table = 'result'
         verbose_name = 'сохраненная сборка'
         verbose_name_plural = 'сохраненные сборки'
+
+    def get_absolute_url(self):
+        return reverse_lazy('detail_result', kwargs={"id_result": self.pk})
 
 
 class Storage(models.Model):

@@ -24,11 +24,11 @@
                     <h5 class="text-uppercase">Сервисы</h5>
 
                     <ul class="list-unstyled mb-0">
+{#                        <li>#}
+{#                            <a href="#!" class="text-white">Конфигуратор</a>#}
+{#                        </li>#}
                         <li>
-                            <a href="#!" class="text-white">Конфигуратор</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'test_view' 1 %}" class="text-white">Подборка ПК</a>
+                            <a href="{% url 'test_view' 1 %}" class="text-white">Подбор ПК</a>
                         </li>
                         <li>
                     </ul>
@@ -41,11 +41,11 @@
 
                     <ul class="list-unstyled mb-0">
                         <li>
-                            <a href="#!" class="text-white">Сборки пользователей</a>
+                            <a href="{% url 'all_pc_assembly' %}" class="text-white">Сборки пользователей</a>
                         </li>
-                        <li>
-                            <a href="#!" class="text-white">Сборки сервиса</a>
-                        </li>
+{#                        <li>#}
+{#                            <a href="#!" class="text-white">Сборки сервиса</a>#}
+{#                        </li>#}
                     </ul>
                 </div>
                 <!--Grid column-->
