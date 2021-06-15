@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'debug_toolbar',
     'captcha',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'wkhtmltopdf'
 ]
 
 MIDDLEWARE = [
@@ -61,10 +62,10 @@ INTERNAL_IPS = [
 ]
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '465'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'test.vladis.gr@gmail.com'
+EMAIL_HOST_PASSWORD = 'XVooy84vZ9KmB2Jo0vaW'
 EMAIL_USE_SSL = 'True'
-DEFAULT_FROM_EMAIL = ''
+DEFAULT_FROM_EMAIL = 'test.vladis.gr@gmail.com'
 
 
 
@@ -149,7 +150,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_DIR = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS=[STATIC_DIR]
-
+# STATIC_ROOT = '/full/path/to/static/directory/'
 
 MEDIA_URL ='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

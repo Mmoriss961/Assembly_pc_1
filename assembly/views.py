@@ -1,8 +1,14 @@
+import datetime
+import os
+from io import BytesIO, StringIO
+from tempfile import template
+
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.db.models import Min,Max
-
+import datetime
+from Assembly_pc import settings
 from Assembly_pc.settings import DEFAULT_FROM_EMAIL
 from django.shortcuts import render, redirect
 from django.views import View
@@ -19,6 +25,15 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from time import gmtime, strftime
 
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
+
+
+import csv
 
 
 
@@ -56,12 +71,7 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-class PcAssemblyView(View):
 
-    def get (self, request):
-
-        pc_assembly = PcAssembly.objects.aggregate(Max('pc_assembly_price_end'))
-        return render(request, 'assembly/PC_Assembly_list.html', {"PC_Assembly": pc_assembly})
 
 
 def index (request):
@@ -76,14 +86,14 @@ def index (request):
 #     model= Test
 #     template_name = 'assembly/build_pc.html'
 
-    # def get_context_data(self,  **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     dis_test_title = Test.objects.values('test_title')
-    #     dis_test_desc = Test.objects.values('test_desc')
-    #     context['title'] = 'Подборк ПК'
-    #     context['dis_test_title'] = dis_test_title
-    #     context['dis_test_desc'] = dis_test_desc
-    #     return context
+# def get_context_data(self,  **kwargs):
+#     context = super().get_context_data(**kwargs)
+#     dis_test_title = Test.objects.values('test_title')
+#     dis_test_desc = Test.objects.values('test_desc')
+#     context['title'] = 'Подборк ПК'
+#     context['dis_test_title'] = dis_test_title
+#     context['dis_test_desc'] = dis_test_desc
+#     return context
 
 # def build_pc_view(request, id_test):
 #     test=Test.objects.get(pk=id_test)
@@ -178,9 +188,9 @@ def result(request):
         if take_storage:
             if take_storage.id_form_factor == 1:
                 queryset = CasePc.objects.filter(Q(max_height_cooler__gte=take_cooler.cooler_height )
-                                                  & Q(max_length_video__gte =take_video.video_length)
-                                                  & Q(id_mboard_size = take_mboard.id_mboard_size)
-                                                  & Q(form_factor_3_5_gte=0))
+                                                 & Q(max_length_video__gte =take_video.video_length)
+                                                 & Q(id_mboard_size = take_mboard.id_mboard_size)
+                                                 & Q(form_factor_3_5_gte=0))
             else:
                 queryset = CasePc.objects.filter( Q(max_height_cooler__gte=take_cooler.cooler_height )
                                                   & Q(max_length_video__gte =take_video.video_length)
@@ -196,7 +206,7 @@ def result(request):
 
         if take_video.video_pci_e:
             queryset = PowerSupply.objects.filter(Q(power_supply_power__gte=take_video.power_supply_unit)
-                                              & Q(power_supply_pci_e__gte=take_video.video_pci_e))
+                                                  & Q(power_supply_pci_e__gte=take_video.video_pci_e))
         else:
             queryset = PowerSupply.objects.filter(Q(power_supply_power__gte=take_video.power_supply_unit))
         take_price_pow_sup = queryset.aggregate(Min('price_rub'))
@@ -206,12 +216,12 @@ def result(request):
         #     take_price_ddr['price_rub__min'] = take_price_ddr['price_rub__min']*2
         #     print(take_price_ddr['price_rub__min'])
         if x == 0:
-            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+\
-                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+\
+            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+ \
+                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+ \
                         take_price_storage['price_rub__min']+take_price_storage_hdd+take_price_ddr['price_rub__min']+take_price_proc['price_rub__min']
         else:
-            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+\
-                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+\
+            price_end = take_price_pow_sup['price_rub__min'] + take_price_case['price_rub__min'] +take_price_cooler['price_rub__min']+ \
+                        take_price_mboard['price_rub__min'] +take_price_video['price_rub__min']+ \
                         take_price_storage['price_rub__min']+take_price_storage_hdd['price_rub__min']+take_price_ddr['price_rub__min']+take_price_proc['price_rub__min']
         # print(price_end)
 
@@ -304,8 +314,8 @@ def save_result(request):
         #       take_storage_hdd,take_storage,take_case,price_end,take_time, current_user)
 
         instance = Result.objects.create(result_date=take_time, result_title=take_proc+" "+take_video,power_supply=take_pow_sup,
-                                             storage="HDD:"+take_storage_hdd+"; SSD:"+take_storage,mboard=take_mboard, proc=take_proc,id_pc_assembly=pc_assembly,
-                                             video =take_video, ddr=take_ddr,cooler=take_cooler, case=take_case, result_price_end = price_end ,id_test = id_test,user=current_user )
+                                         storage="HDD:"+take_storage_hdd+"; SSD:"+take_storage,mboard=take_mboard, proc=take_proc,id_pc_assembly=pc_assembly,
+                                         video =take_video, ddr=take_ddr,cooler=take_cooler, case=take_case, result_price_end = price_end ,id_test = id_test,user=current_user )
 
         instance = instance.save()
     return redirect('result_list')
@@ -313,6 +323,9 @@ def save_result(request):
 
 def my_acc(request):
     return render(request, 'assembly/my_account.html')
+
+
+
 
 
 
@@ -384,7 +397,85 @@ class detail_pc_assembly(DetailView):
     #     # context['pc_assembly']=pc_assembly_img
     #     # print(pc_assembly_img.id_proc.proc_img)
     #     return context
+# class report_admin_assembly(ListView):
+#     model = PcAssembly
+#     template_name = "assembly/report_admin_assembly.html"
+#     context_object_name = "report_admin_assembly"
+#
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # d_min = datetime.date(2001,7,28)
+#         # d_max = datetime.date(2021,15,6)
+#         date_min = PcAssembly.objects.filter(pc_assembly_date__lte=datetime.now())
+#         date_max = PcAssembly.objects.filter(pc_assembly_date__gte=datetime.now())
+#         # date_test = PcAssembly.objects.filter(pc_assembly_date__contains=datetime.now())
+#         # print(date_max)
+#         # print(date_min)
+#         # date_end = PcAssembly.objects.filter(pc_assembly_date__lte=d_min)
+#         context['date_min'] = date_min
+#         context['date_max'] = date_max
+#         # context['date_end'] = date_end
+#
+#
+#         return context
 
+class filter_report_admin_assembly(all_pc_assembly,ListView):
+
+    template_name = "assembly/report_admin_assembly.html"
+
+    def get_queryset(self):
+        date_min = self.request.GET.get('date_min')
+        date_max = self.request.GET.get('date_max')
+        queryset = PcAssembly.objects.filter(Q(pc_assembly_date__gte=date_min) & Q(pc_assembly_date__lte=date_max))
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(filter_report_admin_assembly, self).get_context_data(*args, **kwargs)
+        queryset = self.get_queryset()
+        context['get_count'] = queryset.count()
+        return context
+#
+def report_admin_assembly(request):
+    return render(request,'assembly/report_admin_assembly.html')
+
+
+
+
+def report_admin_fb(request):
+    return  render(request,'assembly/report_admin_fb.html')
+
+class filter_report_admin_fb(ListView):
+    model = Feedback
+    template_name = "assembly/report_admin_fb.html"
+    context_object_name = "filter_report_admin_fb"
+
+    def get_queryset(self):
+        date_min = self.request.GET.get('date_min')
+        date_max = self.request.GET.get('date_max')
+        queryset = Feedback.objects.filter(Q(fb_date__gte=date_min) & Q(fb_date__lte=date_max))
+        print(queryset)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(filter_report_admin_fb, self).get_context_data(*args, **kwargs)
+        get_count = Feedback.objects.count()
+        context['get_count'] = get_count
+        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     dis_video_mem = Videocard.objects.values('video_memory').distinct().order_by('video_memory')
+    #     dis_video_manuf = Videocard.objects.values('id_manuf__name').distinct().order_by('id_manuf__name')
+    #     minPrice = Videocard.objects.aggregate(Min('price_rub'))
+    #     maxPrice = Videocard.objects.aggregate(Max('price_rub'))
+    #     context['title'] = 'Видеокарты'
+    #     context['dis_video_mem'] = dis_video_mem
+    #     context['dis_video_manuf'] = dis_video_manuf
+    #     context['minPrice'] = minPrice
+    #     context['maxPrice'] = maxPrice
+    #
+    #     return context
 
 
 class result_list(ListView):
@@ -419,18 +510,68 @@ class detail_result(DetailView):
         get_q = self.get_object().id_pc_assembly.id_pc_assembly
         # print(get_q)
         pc_assembly = PcAssembly.objects.prefetch_related('id_proc','id_vga','id_ddr','id_cooler','id_case',
-                                                              'id_storage','id_motherboard','id_power_supply').get(id_pc_assembly=get_q)
+                                                          'id_storage','id_motherboard','id_power_supply').get(id_pc_assembly=get_q)
         context['pc_assembly'] = pc_assembly
         # context['pc_assembly']=pc_assembly_img
         # print(pc_assembly_img.id_proc.proc_img)
         return context
 
 
-# def det_res(request,id):
-#     det_res=Result.objects.get(pk=id)
-#     return render(request,'assembly/detail_result.html',{'detail_result':det_res})
 
 
+
+
+
+# def link_callback(uri, rel):
+#     """
+#     Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+#     resources
+#     """
+#     result = finders.find(uri)
+#     if result:
+#         if not isinstance(result, (list, tuple)):
+#             result = [result]
+#         result = list(os.path.realpath(path) for path in result)
+#         path=result[0]
+#     else:
+#         sUrl = settings.STATIC_URL        # Typically /static/
+#         sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
+#         mUrl = settings.MEDIA_URL         # Typically /media/
+#         mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+#
+#         if uri.startswith(mUrl):
+#             path = os.path.join(mRoot, uri.replace(mUrl, ""))
+#         elif uri.startswith(sUrl):
+#             path = os.path.join(sRoot, uri.replace(sUrl, ""))
+#         else:
+#             return uri
+#
+#     # make sure that file exists
+#     if not os.path.isfile(path):
+#         raise Exception(
+#             'media URI must start with %s or %s' % (sUrl, mUrl)
+#         )
+#     return path
+#
+#
+# def render_pdf_view(request):
+#     result_test = Result.objects.all()
+#
+#     template_path = 'assembly/pdf1.html'
+#     context = {'result_test': result_test}
+#     # Create a Django response object, and specify content_type as pdf
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'filename="report.pdf"'
+#     # find the template and render it.
+#     template = get_template(template_path)
+#     html = template.render(context)
+#
+#     # create a pdf
+#     pisa_status = pisa.CreatePDF(html.encode('utf-8'), dest=response, link_callback=link_callback)
+#     # if error then show some funy view
+#     if pisa_status.err:
+#         return HttpResponse('We had some errors <pre>' + html + '</pre>')
+#     return response
 
 
 

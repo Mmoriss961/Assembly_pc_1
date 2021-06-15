@@ -12,6 +12,7 @@
 <!--/header-->
 <form action="{% url 'save_result' %}" method="POST" >
     {% csrf_token %}
+    <div class="container bg-white shadow mb-2 text-center" style="min-height: 80vh">
     <div class=table-responsive">
         <table class="table" >
         <input name ="take_time" type="hidden" value="{{ showtime }}">
@@ -101,6 +102,7 @@
             <h4>Для того, чтобы сохранить сборку войдите в систему или зарегистрируйтесь</h4>
         {% endif %}
         <br>
+    </div>
     </div>
 </form>
 {% include 'assembly/inc/_footer.html' %}

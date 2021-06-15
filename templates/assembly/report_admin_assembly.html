@@ -1,0 +1,67 @@
+{% load static  %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    {% include 'assembly/inc/_head.html' %}
+    <title>Отчет "Сборки"</title>
+
+</head>
+
+<body style="margin-top: 60px;">
+
+{#    {% csrf_token %}#}
+<!--header-->
+{% include 'assembly/inc/_header.html' %}
+<!--/header-->
+<form action="{% url 'filter_report_admin_assembly' %}" method="get">
+
+    <div class="container bg-white shadow mb-2 text-center" style="min-height: 80vh">
+        <div class=" d-flex flex align-self-center justify-content-center pt-3" >
+            <input class="form-control" type="datetime-local"   name="date_min"  required>
+            <input class="form-control" type="datetime-local"  name="date_max"  required>
+        </div>
+        <br>
+        <button class="btn " type="submit" style="width: 100%!important; white-space: normal !important;">Найти</button>
+
+        {% if all_pc_assembly %}
+            <div class=table-responsive">
+                <table class="table" id="example-table" >
+                    <thead>
+                    <tr>
+                        <th>Наименование:</th>
+                        <th>Владелец сборки:</th>
+                        <th>Стоимость:</th>
+                        <th>Дата сборки:</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        {% for obj in all_pc_assembly  %}
+                            <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " > <a href="{{ obj.get_absolute_url }}"> {{ obj.id_proc }} + {{ obj.id_vga }}</a></th>
+                            <td>{{ obj.id_user }}</td>
+                            <td>{{ obj.pc_assembly_price_end|intcomma}}  &#8381</td>
+                            <td>{{ obj.pc_assembly_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    <tr>
+                        <th>Общее число сборок:</th>
+                        <th></th>
+                        <th></th>
+                        <th>{{ get_count }}</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button  class="btn btn-primary mb-2" id="downloadexcel">Сохранить в Excel</button>
+        {% endif %}
+    </div>
+</form>
+<!--/footer-->
+{% include 'assembly/inc/_footer.html' %}
+<!--/footer-->
+<script src="{% static 'js/table2excel.js' %}"></script>
+<script src="{% static 'js/export_excel.js' %}"></script>
+
+</body>
+</html>

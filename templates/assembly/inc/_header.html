@@ -26,14 +26,24 @@
 {#                </div>#}
             </div>
             <div class="navbar-nav">
-                {% if request.user.is_authenticated %}
-                    <div class="nav-item nav-link " style="cursor:default !important;">Здравствуйте, {{ user.username }}</div>
+
+                {% if request.user.is_authenticated and not request.user.is_superuser%}
+                     <div class="nav-item nav-link " style="cursor:default !important;">Здравствуйте, {{ user.username }}</div>
                      <a href="{% url 'result_list' %}" class="nav-item nav-link">Ваш список сборок</a>
                 {% endif %}
                 {% if request.user.is_superuser %}
+                     <div class="nav-item nav-link " style="cursor:default !important;">Здравствуйте, {{ user.first_name  }} {{ user.last_name }}</div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Отчетность</a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'report_admin_assembly' %}" class="dropdown-item">Отчет "Сборки"</a>
+                            <a href="{% url 'report_admin_fb' %}" class="dropdown-item">Отчет "Обратная связь"</a>
+                        </div>
+                    </div>
                     <a href="{% url 'admin:index' %}" class="nav-item nav-link">Панель администратора</a>
                 {% endif %}
                 {% if request.user.is_authenticated  %}
+
                     <a href="{% url 'logout' %}" class="nav-item nav-link">Выход</a>
 
                 {%else  %}

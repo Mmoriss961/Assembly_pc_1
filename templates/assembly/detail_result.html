@@ -13,7 +13,7 @@
 <form action=" " method="get">
     <div class="container bg-white shadow mb-2 mt-2 pt-3 " style="min-height: 80vh">
         <div class=table-responsive">
-            <table class="table" >
+            <table class="table" id="example-table">
                 <thead>
                 <tr>
                     <th>Комлпектующие:</th>
@@ -25,7 +25,7 @@
                 <tr>
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " >Процессор: <img src="{{ pc_assembly.id_proc.proc_img.url }}" width="100px" height="100px"></th>
                     <td>Наименование: {{ detail_result.proc }},Сокет: {{pc_assembly.id_proc.id_socket }}, Количество ядер {{ pc_assembly.id_proc.number_cores }} x {{ pc_assembly.id_proc.proc_frequency }} МГц, Тепловыделение {{pc_assembly.id_proc.tdp }} Вт</td>
-                    <td>{{ pc_assembly.id_pc_assembly }}</td>
+
                 </tr>
                 <tr>
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Видеокарта: <img src="{{ pc_assembly.id_vga.video_img.url }}" width="100px" height="100px"></th>
@@ -38,7 +38,8 @@
                 <tr>
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Кулер: <img src="{{ pc_assembly.id_cooler.cooler_img.url }}" width="100px" height="100px"></th>
                     <td>Наименование: {{ detail_result.cooler }}, Максимальная рассеиваемая мощность(TDP): {{ pc_assembly.id_cooler.cooler_max_tdp }} Вт , Высота кулера: {{pc_assembly.id_cooler.cooler_height }} мм,
-                        Типы поддерживаемых сокетов: {% for q in pc_assembly.id_cooler.cooler_socket.all %}
+                        Типы поддерживаемых сокетов:
+                        {% for q in pc_assembly.id_cooler.cooler_socket.all %}
                             {{ q }},
                         {% endfor %}
                     </td>
@@ -63,13 +64,12 @@
                         {% for x in pc_assembly.id_storage.all %}
                             Наименованиие: {{ x.id_manuf}} {{x.name}}, Тип: {{ x.id_storage_type }}, Форм-Фактор: {{x.id_form_factor}}, Объём: {{ x.storage_volume }}Гб, Скорость чтения/записи: {{ x.storage_read_speed }}/{{x.storage_write_speed  }} МБ/c
                             <br>
-                            <br>
                         {% endfor %}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Блок питания:<img src="{{ pc_assembly.id_power_supply.power_supply_img.url }}" width="100px" height="100px"></th>
-                    <td>Наименование: {{ detail_result.power_supply }}, Мощность : {{ pc_assembly.id_power_supply.power_supply_power }} Вт, Количество разъемов 6+2-pin PCI-E: {{pc_assembly.id_power_supply.power_supply_pci_e}}
+                    <td>Наименование: {{ detail_result.power_supply }}, Мощность: {{ pc_assembly.id_power_supply.power_supply_power }} Вт, Количество разъемов 6+2-pin PCI-E: {{pc_assembly.id_power_supply.power_supply_pci_e}}
                     </td>
                 </tr>
                 <tr>
@@ -82,28 +82,31 @@
                     <td>{{ detail_result.result_date }}
                     </td>
                 </tr>
-                <tr>
+                <tr >
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Наименование подбора:</th>
                     <td><a href="{% url 'test_view' detail_result.id_test.id_test %}">{{ detail_result.id_test }}</a>
                     </td>
                 </tr>
-                <tr>
+                <tr >
                     <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Ссылка на сборку:</th>
                     <td><a href="{% url 'detail_pc_assembly' pc_assembly.id_pc_assembly %}">{{ detail_result.id_pc_assembly }}</a>
                     </td>
                 </tr>
                 <tr>
                     <th></th>
+                    {#<th scope="row" class="row d-flex flex-column align-self-center justify-content-center "><a href="{% url 'render_pdf_view' %}"><button class="btn btn-primary" type="submit">Скачать в PDF</button></a></th>#}
                     <td></td>
                 </tr>
                 </tbody>
             </table>
         </div>
+    <button  class="btn btn-primary mb-2" id="downloadexcel">Сохранить в Excel</button>
     </div>
 </form>
 <!--/footer-->
 {% include 'assembly/inc/_footer.html' %}
 <!--/footer-->
-
+<script src="{% static 'js/table2excel.js' %}"></script>
+<script src="{% static 'js/export_excel.js' %}"></script>
 </body>
 </html>

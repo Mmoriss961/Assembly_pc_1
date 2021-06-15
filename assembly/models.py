@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.urls import reverse_lazy
 
@@ -496,7 +498,7 @@ class Feedback(models.Model):
     from_email = models.EmailField(db_column='From_email', max_length=100, verbose_name='От кого отправлен Email')
     subject = models.CharField(db_column='Subject', max_length=100, verbose_name='Тема')
     message = models.CharField(db_column='Message', max_length=100, verbose_name='Сообщение')
-
+    fb_date = models.DateTimeField(db_column='FB_date', verbose_name="Дата/время создания", default=datetime.now, blank=True)
     def __str__(self):
         return self.subject
 

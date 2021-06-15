@@ -13,7 +13,7 @@
 <form action=" " method="get">
     <div class="container bg-white shadow mb-2 mt-2 pt-3 " style="min-height: 80vh">
         <div class=table-responsive">
-            <table class="table" >
+            <table class="table" id="example-table">
                 <thead>
                 <tr>
                     <th>Комлпектующие:</th>
@@ -84,7 +84,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Автор сборки:</th>
+                    <th scope="row" class="row d-flex flex-column align-self-center justify-content-center ">Владелец сборки:</th>
                     <td>{{ pc_assembly.id_user.username }}
                     </td>
                 </tr>
@@ -95,11 +95,13 @@
                 </tbody>
             </table>
         </div>
+        <button  class="btn btn-primary mb-2" id="downloadexcel">Сохранить в Excel</button>
     </div>
 </form>
 <!--/footer-->
 {% include 'assembly/inc/_footer.html' %}
 <!--/footer-->
-
+<script src="{% static 'js/table2excel.js' %}"></script>
+<script src="{% static 'js/export_excel.js' %}"></script>
 </body>
 </html>
