@@ -25,6 +25,7 @@ urlpatterns = [
     # path('build_pc/<int:id_test>',build_pc_view, name='build_pc_view'),
     #
     # path('build_pc/', question.as_view(), name='build_pc'),
+    path('filter_all_pc/',filter_all_pc.as_view(),name='filter_all_pc'),
     path('pc_assembly/<int:id_test>', test_view, name='test_view'),
     path('result/',result,name='result'),
     path('result_save/',save_result,name='save_result'),

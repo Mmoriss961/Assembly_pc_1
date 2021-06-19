@@ -111,6 +111,11 @@ def test_view(request, id_test):
     test=Test.objects.filter(pk=id_test).prefetch_related('question_set','question_set__answer_set')
     return render(request,'assembly/build_pc.html', {'test_view':test,'title':'Сборка ПК','id_test':test[0].id_test})
 
+
+
+
+
+
 def result(request):
     if request.method=='POST':
         form=request.POST.getlist('test')
@@ -355,7 +360,70 @@ class all_pc_assembly(ListView):
         context = super(all_pc_assembly, self).get_context_data(*args, **kwargs)
         get_count = PcAssembly.objects.count()
         context['get_count'] = get_count
+        question = Question.objects.filter(id_test=1).prefetch_related('answer_set')
+        # pc_assembly = PcAssembly.objects.filter(id_ddr__ddr_size=8)
+        # print(pc_assembly)
+        context['question'] = question
+        # for i in question:
+        #     for x in i.answer_set.all():
+        #         print(x)
         return context
+
+class filter_all_pc(all_pc_assembly,ListView):
+
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            form = self.request.GET.getlist('q')
+            if len(str(self.request.GET.get('radio_box')))>0:
+                form_hdd = str(self.request.GET.get('radio_box'))
+
+            # print(form_hdd)
+            proc = 0
+            video =0
+            ddr = 0
+            dicts = {"proc": [], "video": [], "ddr": []}
+            # x = int(form[len(form) - 1][0])  # переменная для поиска накопителя( 1 - находим hdd, 0 не находим)
+            # print(x)
+            for i in form:
+                k = i.split()
+                dicts["proc"].append(int(k[0]))
+                dicts["video"].append(int(k[1]))
+                dicts["ddr"].append(int(k[2]))
+            if len(dicts["proc"]) >0:
+                proc = max(dicts["proc"])
+            if len(dicts["video"])>0:
+                video = max(dicts["video"])
+            if len(dicts["ddr"])>0:
+                ddr = max(dicts["ddr"])
+            # print(form_hdd)
+            if form_hdd =='None':
+                queryset = PcAssembly.objects.filter(Q(id_proc__proc_benchmark__gte=proc) & Q(id_vga__video_benchmark__gte=video) & Q(id_ddr__ddr_size__gte=ddr/2))
+                print('1')
+            else:
+                if form_hdd[0]== "1":
+                    queryset = PcAssembly.objects.filter(id_storage__storage_volume__gte=500)
+                    print(2)
+                else:
+                    queryset = PcAssembly.objects.filter(id_storage__id_storage_type=2).exclude(id_storage__id_storage_type=1)
+                    print(3)
+            if len(form_hdd)>0 and len(form)>0:
+                if form_hdd[0]== "1":
+                    queryset = PcAssembly.objects.filter(Q(id_proc__proc_benchmark__gte=proc) & Q(id_vga__video_benchmark__gte=video) & Q(id_ddr__ddr_size__gte=ddr/2)&Q(id_storage__storage_volume__gte=500))
+                else:
+                    queryset = PcAssembly.objects.filter(Q(id_proc__proc_benchmark__gte=proc) & Q(id_vga__video_benchmark__gte=video) & Q(id_ddr__ddr_size__gte=ddr / 2)& Q(id_storage__id_storage_type=2)).exclude(id_storage__id_storage_type=1)
+            return queryset
+            # return render(request,'assembly/all_pc_assembly.html',context=context)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(filter_all_pc, self).get_context_data(*args, **kwargs)
+        all_pc_assembly = self.get_queryset()
+        # print(all_pc_assembly)
+        context['get_count'] = all_pc_assembly.count()
+        context['all_pc_assembly'] = all_pc_assembly
+        return context
+
+
+
 
 class detail_pc_assembly(DetailView):
     model = PcAssembly

@@ -11,40 +11,80 @@
 {% include 'assembly/inc/_header.html' %}
 <!--/header-->
 
-<form action="{% url 'all_pc_assembly' %}" method="get">
-    <div class="container bg-white shadow mb-2 text-center" id = "pagination" style="min-height: 80vh">
-        <div class=table-responsive">
-            <table class="table" >
-                <thead>
-                <tr>
-                    <th>Наименование:</th>
-                    <th>Стоимость:</th>
-                    <th>Дата сборки:</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% if  all_pc_assembly %}
-                    <tr>
-                        {% for obj in all_pc_assembly  %}
-                            <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " > <a href="{{ obj.get_absolute_url }}"> {{ obj.id_proc }} + {{ obj.id_vga }}</a></th>
-                            <td>{{ obj.pc_assembly_price_end|intcomma}}  &#8381</td>
-                            <td>{{ obj.pc_assembly_date }}</td>
-                            </tr>
-                        {% endfor %}
-                    <tr>
-                        <th>Общее число сборок:</th>
-                        <th></th>
-                        <th>{{ get_count }}</th>
-                    </tr>
-                    </tbody>
-                    </table>
 
-                {% else %}
-                    <h3>Сборки пользователей не найдены.</h3>
-                    <a href="{% url 'test_view' 1 %}">Испытай первым сервис по подбору ПК!</a>
-                {% endif %}
+<div class="container bg-white shadow mb-2 text-center" id = "pagination" style="min-height: 80vh">
+    <form action="{% url 'filter_all_pc' %}" method="get">
+        <div><h2>Поиск по программе/игре:</h2></div>
+        <div class="text-left row">
+            {% for q in question %}
 
+                {% for answer in q.answer_set.all %}
+
+                    {% if q.question_title != 'Планируете ли вы хранить на ПК медиаконтент большого объема( видео, фотографии, музыку и т.д)'%}
+
+                        <div class="col-3">
+                            <input type="checkbox" name="q" value="{{ answer.answer_param_proc }} {{ answer.answer_param_video }} {{ answer.answer_param_ddr }}">
+                            <label>{{ answer.answer_title }}</label>
+                        </div>
+                    {% endif %}
+                    {% if forloop.parentloop.last %}
+                        {% if forloop.counter == 1 %}
+                            <div class="justify-content-center row"><h2>Хранение мультимедийоного контента</h2></div>
+                            <br>
+                        {% endif %}
+                         <div class="col-6 row justify-content-center">
+                        <input type="radio" name="radio_box" value="{{ answer.answer_param_proc }} {{ answer.answer_param_video }} {{ answer.answer_param_ddr }}">
+                        <label>{{ answer.answer_title }}</label>
+                         </div>
+                    {% endif %}
+                {% endfor %}
+                {#                #}
+                {#                        {% if answer.answer_title == 'Да' or answer.answer_title == 'Нет'%}#}
+                {#                            <div><h2>Хранение мультимедийоного контента</h2></div>#}
+                {#                            <input type="radio" name="q" value="{{ answer.answer_param_proc }} {{ answer.answer_param_video }} {{ answer.answer_param_ddr }}">#}
+                {#                            <label>{{ answer.answer_title }}</label>#}
+                {#                                                   #}
+                {#                        <br>#}
+            {% endfor %}
+
+            {#            {{ question.last.answer_set.last }}#}
         </div>
+        <button type="submit" class="btn btn-primary">Найти</button>
+
+    </form>
+    <br>
+    <div class=table-responsive">
+        <table class="table" >
+            <thead>
+            <tr>
+                <th>Наименование:</th>
+                <th>Стоимость:</th>
+                <th>Дата сборки:</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if  all_pc_assembly %}
+                <tr>
+                    {% for obj in all_pc_assembly  %}
+                        <th scope="row" class="row d-flex flex-column align-self-center justify-content-center " > <a href="{{ obj.get_absolute_url }}"> {{ obj.id_proc }} + {{ obj.id_vga }}</a></th>
+                        <td>{{ obj.pc_assembly_price_end|intcomma}}  &#8381</td>
+                        <td>{{ obj.pc_assembly_date }}</td>
+                        </tr>
+                    {% endfor %}
+                <tr>
+                    <th>Общее число сборок:</th>
+                    <th></th>
+                    <th>{{ get_count }}</th>
+                </tr>
+                </tbody>
+                </table>
+
+            {% else %}
+                <h3>Сборки пользователей не найдены.</h3>
+                <a href="{% url 'test_view' 1 %}">Испытай первым сервис по подбору ПК!</a>
+            {% endif %}
+
+    </div>
 
     {% if page_obj.has_other_pages %}
         <div id = "pagination_centred " >
